@@ -1,0 +1,42 @@
+{
+  "name": "thesis-web",
+  "version": "1.0.0",
+  "description": "web for thesis project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon",
+    "dev": "nodemon"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "ignore": [
+      "node_modules"
+    ],
+    "exec": "ts-node ./src/app.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tudu-Pham/football-analytics-thesis-project.git"
+  },
+  "author": "Pham Trung Dung - ITITIU21007",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tudu-Pham/football-analytics-thesis-project/issues"
+  },
+  "homepage": "https://github.com/Tudu-Pham/football-analytics-thesis-project#readme",
+  "dependencies": {
+    "dotenv": "16.4.7",
+    "express": "5.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.0",
+    "@types/node": "22.10.7",
+    "nodemon": "3.1.9",
+    "ts-node": "10.9.2",
+    "typescript": "5.7.3"
+  }
+}
