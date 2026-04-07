@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Football Analytics</title>
+    <link rel="icon" type="image/png" href="/images/logo.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="page-signup">
+    <div class="signup-bg" aria-hidden="true"></div>
+
+    <main class="signup-main">
+        <section class="signup-card glass-card">
+            <header class="signup-brand">
+                <div class="brand-logo">
+                    <img class="brand-logo__img" src="/images/logo.png" width="56" height="56" alt="Football Analytics">
+                </div>
+                <div class="brand-text">
+                    <span class="brand-text__football">FOOTBALL</span>
+                    <span class="brand-text__analytics">ANALYTICS</span>
+                </div>
+            </header>
+
+            <h1 class="signup-heading">Create your account</h1>
+            <p class="signup-subheading">Join Football Analytics to unlock match insights and performance statistics.
+            </p>
+
+            <form class="signup-form" action="/createUser" method="post">
+                <div class="signup-grid">
+                    <div class="input-wrap">
+                        <span class="input-wrap__icon" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.75">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </span>
+                        <input class="signin-input" type="text" name="fullName" placeholder="Full Name"
+                            autocomplete="name" required>
+                    </div>
+
+                    <div class="input-wrap">
+                        <span class="input-wrap__icon" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.75">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M16 8h-5a4 4 0 1 0 0 8h2a3 3 0 1 0 0-6h-2" />
+                            </svg>
+                        </span>
+                        <input class="signin-input" type="text" name="username" placeholder="Username"
+                            autocomplete="username" required>
+                    </div>
+                </div>
+
+                <div class="input-wrap">
+                    <span class="input-wrap__icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.75">
+                            <rect x="3" y="5" width="18" height="14" rx="2" ry="2" />
+                            <path d="M3 7l9 6 9-6" />
+                        </svg>
+                    </span>
+                    <input class="signin-input" type="email" name="email" placeholder="Email Address"
+                        autocomplete="email" required>
+                </div>
+
+                <div class="input-wrap">
+                    <span class="input-wrap__icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.75">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                    </span>
+                    <input class="signin-input signin-input--password" type="password" id="signup-password"
+                        name="password" placeholder="Password" autocomplete="new-password" required>
+                    <button type="button" class="input-wrap__toggle" data-toggle-password data-target="signup-password"
+                        aria-label="Show password" aria-pressed="false">
+                        <svg class="icon-eye icon-eye--open" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.75">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg class="icon-eye icon-eye--closed" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.75" hidden>
+                            <path
+                                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="input-wrap">
+                    <span class="input-wrap__icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.75">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                    </span>
+                    <input class="signin-input signin-input--password" type="password" id="signup-confirm-password"
+                        name="confirmPassword" placeholder="Confirm Password" autocomplete="new-password" required>
+                    <button type="button" class="input-wrap__toggle" data-toggle-password
+                        data-target="signup-confirm-password" aria-label="Show password" aria-pressed="false">
+                        <svg class="icon-eye icon-eye--open" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.75">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg class="icon-eye icon-eye--closed" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.75" hidden>
+                            <path
+                                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="password-rules">
+                    <p class="password-rules__title">Password must contain:</p>
+                    <ul class="password-rules__list">
+                        <li data-password-rule="minLength">At least 8 characters</li>
+                        <li data-password-rule="number">One number</li>
+                        <li data-password-rule="uppercase">One uppercase letter</li>
+                        <li data-password-rule="special">One special character</li>
+                    </ul>
+                </div>
+
+                <label class="remember remember--terms">
+                    <input class="remember__input" type="checkbox" name="terms" required>
+                    <span class="remember__box" aria-hidden="true"></span>
+                    <span class="remember__label">I agree to the <a href="#" class="link-signup">Terms of Service</a>
+                        and <a href="#" class="link-signup">Privacy Policy</a></span>
+                </label>
+
+                <button type="submit" class="btn-signup">Sign Up</button>
+            </form>
+
+            <div class="social-auth">
+                <p class="social-auth__divider">or sign up with</p>
+                <div class="social-auth__buttons">
+                    <button type="button" class="social-btn">Google</button>
+                    <button type="button" class="social-btn">GitHub</button>
+                </div>
+            </div>
+
+            <p class="signin-footer-prompt">
+                <span class="text-muted-prompt">Already have an account?</span>
+                <a href="#" class="link-signup">Sign in</a>
+            </p>
+        </section>
+    </main>
+
+    <script src="/javascripts/main.js" defer></script>
+</body>
+
+</html>
