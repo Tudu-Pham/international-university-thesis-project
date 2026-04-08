@@ -3,11 +3,11 @@ import { handleCreateUser } from "../services/user.service";
 
 
 const getHomePage = (req: Request, res: Response) => {
-    return res.render("home");
+    return res.render("client/home");
 }
 
 const getCreateUserPage = (req: Request, res: Response) => {
-    return res.render("create-user");
+    return res.render("client/create-user");
 }
 
 const postCreateUserPage = (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ const postCreateUserPage = (req: Request, res: Response) => {
 }
 
 const getSignInPage = (req: Request, res: Response) => {
-    return res.render("sign-in-page");
+    return res.render("client/sign-in-page");
 }
 
 
