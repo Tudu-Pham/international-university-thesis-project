@@ -78,7 +78,7 @@
                     </div>
                 </div>
 
-                <a class="admin-logout" href="#">
+                <a class="admin-logout" href="/signin">
                     <span class="admin-logout__icon" aria-hidden="true">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -106,10 +106,16 @@
                             <img src="/images/logo.png" alt="User avatar" />
                         </div>
                         <div class="admin-view-profile__meta">
-                            <h1 class="admin-view-profile__name">Dung</h1>
-                            <p class="admin-view-profile__line"><span>User:</span> tudu</p>
-                            <p class="admin-view-profile__line"><span>Email:</span> dungphamtrung002@gmail.com</p>
-                            <p class="admin-view-profile__line"><span>Member</span>since April 2024</p>
+                            <h1 class="admin-view-profile__name">
+                                <%= user[0].name %>
+                            </h1>
+                            <p class="admin-view-profile__line"><span>User:</span>
+                                <%= user[0].username %>
+                            </p>
+                            <p class="admin-view-profile__line"><span>Email:</span>
+                                <%= user[0].email %>
+                            </p>
+                            <p class="admin-view-profile__line"><span>Member</span>since April 2026</p>
                         </div>
                     </div>
                     <button class="admin-btn admin-btn--primary admin-view-profile__edit" type="button">

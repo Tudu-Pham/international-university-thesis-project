@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAllUsers, handleCreateUser, handleDeleteUser } from "services/user.service";
+import { getAllUsers, getUserByID, handleCreateUser, handleDeleteUser } from "services/user.service";
 
 
 const getHomePage = (req: Request, res: Response) => {
@@ -18,7 +18,6 @@ const postCreateUserPage = async (req: Request, res: Response) => {
     const { fullName, username, email, password } = req.body;
     // handle create user
     await handleCreateUser(fullName, username, email, password)
-
     return res.redirect("/");
 }
 
@@ -29,7 +28,6 @@ const getSignInPage = (req: Request, res: Response) => {
 const getAdminDashboard = async (req: Request, res: Response) => {
     //get users
     const users = await getAllUsers();
-
     return res.render("admin/dashboard", {
         users: users
     });
@@ -43,7 +41,12 @@ const DeleteUser = async (req: Request, res: Response) => {
 
 const ViewUser = async (req: Request, res: Response) => {
     const id = req.params.id as string;
-    return res.render("admin/view");
+    //get user by id
+    const user = await getUserByID(id);
+    return res.render("admin/view", {
+        id: id,
+        user: user
+    });
 }
 
 export {
