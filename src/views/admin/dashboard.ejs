@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - User Management</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="icon" type="image/png" href="/images/logo.ico" />
+    <link rel="stylesheet" href="/css/style.css" />
+
+</head>
+
+<body class="admin-page">
+    <div class="admin-bg" aria-hidden="true"></div>
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar__brand">
+                <div class="admin-brand-mark" aria-hidden="true">
+                    <img src="/images/logo.png" alt="" />
+                </div>
+                <div class="admin-brand-text">
+                    <div class="admin-brand-title">FOOTBALL</div>
+                    <div class="admin-brand-subtitle">ANALYTICS</div>
+                </div>
+            </div>
+
+            <nav class="admin-nav" aria-label="Admin navigation">
+                <a class="admin-nav__item is-active" href="#">
+                    <span class="admin-nav__icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M3 12l2-2 4 4 8-8 4 4-2 2-6-6-8 8z"></path>
+                        </svg>
+                    </span>
+                    Dashboard
+                </a>
+                <a class="admin-nav__item" href="#">
+                    <span class="admin-nav__icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M20 8v6"></path>
+                            <path d="M23 11h-6"></path>
+                        </svg>
+                    </span>
+                    Users
+                </a>
+                <a class="admin-nav__item" href="#">
+                    <span class="admin-nav__icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M8 7h12"></path>
+                            <path d="M8 12h12"></path>
+                            <path d="M8 17h12"></path>
+                            <path d="M4 7h.01"></path>
+                            <path d="M4 12h.01"></path>
+                            <path d="M4 17h.01"></path>
+                        </svg>
+                    </span>
+                    Matches
+                </a>
+
+            </nav>
+
+            <div class="admin-sidebar__footer">
+                <div class="admin-profile">
+                    <div class="admin-profile__avatar" aria-hidden="true">
+                        <img src="/images/logo.png" alt="" />
+                    </div>
+                    <div class="admin-profile__meta">
+                        <div class="admin-profile__name">John Doe</div>
+                        <div class="admin-profile__role">Admin</div>
+                    </div>
+                </div>
+
+                <a class="admin-logout" href="#">
+                    <span class="admin-logout__icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M10 17l5-5-5-5"></path>
+                            <path d="M15 12H3"></path>
+                            <path d="M21 3v18"></path>
+                        </svg>
+                    </span>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="admin-breadcrumbs">
+                    Dashboard <span class="admin-breadcrumbs__sep">/</span> User Management
+                </div>
+            </header>
+
+            <section class="admin-content">
+                <div class="admin-content__top">
+                    <h1 class="admin-title">User Management</h1>
+
+                    <div class="admin-content__top-right">
+                        <a class="admin-btn admin-btn--primary" href="/createUser">
+                            <span aria-hidden="true">+</span> New User
+                        </a>
+                    </div>
+                </div>
+
+                <div class="admin-search">
+                    <span class="admin-search__icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                    </span>
+                    <input class="admin-search__input" type="text" placeholder="Search username..." />
+                </div>
+
+                <div class="admin-table-card">
+                    <div class="admin-table-wrap">
+                        <table class="admin-table" role="table" aria-label="User management table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Password</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% users.forEach(function(user){%>
+                                    <tr>
+                                        <td>
+                                            <%= user.id %>
+                                        </td>
+                                        <td>
+                                            <%= user.name %>
+                                        </td>
+                                        <td>
+                                            <%= user.username %>
+                                        </td>
+                                        <td>
+                                            <%= user.email %>
+                                        </td>
+                                        <td>
+                                            <%= user.password %>
+                                        </td>
+                                        <td class="admin-table-actions">
+                                            <button type="button"
+                                                class="admin-action admin-action--update">Update</button>
+                                            <button type="button" class="admin-action admin-action--view">View</button>
+                                            <button type="button"
+                                                class="admin-action admin-action--delete">Delete</button>
+                                        </td>
+
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="admin-pagination" aria-label="Pagination">
+                        <button type="button" class="admin-page-btn" disabled>Previous</button>
+                        <span class="admin-page-num is-active">1</span>
+                        <button type="button" class="admin-page-btn" disabled aria-label="Next">Next</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/javascripts/main.js" defer></script>
+</body>
+
+</html>

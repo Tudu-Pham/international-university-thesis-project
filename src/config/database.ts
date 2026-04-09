@@ -8,16 +8,7 @@ const getConnection = async () => {
         password: 'root',
         database: 'footballanalytics'
     });
-
-    try {
-        const [results, fields] = await connection.query(
-            'SELECT * FROM `users`'
-        );
-        console.log(results);
-        console.log(fields);
-    } catch (err) {
-        console.log(err);
-    }
+    return connection;
 }
 
 export default getConnection;
