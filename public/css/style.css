@@ -1101,3 +1101,245 @@
     width: 20px;
     height: 20px;
 }
+
+/* Admin View User Details */
+
+.admin-view-page .admin-bg {
+    background-image:
+        linear-gradient(180deg, rgba(2, 6, 23, 0.84) 0%, rgba(2, 6, 23, 0.96) 100%),
+        url("/images/theme.png");
+}
+
+.admin-view-main {
+    padding-top: 22px;
+}
+
+.admin-view-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.admin-view-profile-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(226, 232, 240, 0.12);
+    background: rgba(2, 6, 23, 0.44);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.admin-view-profile__left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.admin-view-profile__avatar {
+    width: 92px;
+    height: 92px;
+    border-radius: 16px;
+    border: 1px solid rgba(226, 232, 240, 0.16);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: rgba(2, 6, 23, 0.58);
+}
+
+.admin-view-profile__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-view-profile__meta {
+    min-width: 0;
+}
+
+.admin-view-profile__name {
+    margin: 0 0 8px;
+    color: #f8fafc;
+    font-size: 2rem;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.admin-view-profile__line {
+    margin: 4px 0;
+    color: rgba(226, 232, 240, 0.92);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.admin-view-profile__line span {
+    color: rgba(148, 163, 184, 0.96);
+    margin-right: 6px;
+}
+
+.admin-view-profile__edit {
+    flex-shrink: 0;
+    min-width: 150px;
+}
+
+.admin-view-table-card {
+    border-radius: 18px;
+    border: 1px solid rgba(226, 232, 240, 0.12);
+    background: rgba(2, 6, 23, 0.42);
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    overflow: hidden;
+}
+
+.admin-view-table__header {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(2, 6, 23, 0.24);
+}
+
+.admin-view-table__header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.admin-view-table {
+    min-width: 920px;
+}
+
+.admin-view-table thead th {
+    font-size: 0.75rem;
+    letter-spacing: 0.11em;
+}
+
+.admin-view-table tbody td {
+    font-size: 0.92rem;
+}
+
+.admin-view-delete {
+    min-width: 86px;
+}
+
+@media (max-width: 980px) {
+    .admin-view-profile-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-view-profile__edit {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 620px) {
+    .admin-view-main {
+        padding: 16px;
+    }
+
+    .admin-view-profile__avatar {
+        width: 76px;
+        height: 76px;
+    }
+
+    .admin-view-profile__name {
+        font-size: 1.5rem;
+    }
+
+    .admin-view-table__header h2 {
+        font-size: 1.35rem;
+    }
+}
+
+/* Admin Matches */
+
+.admin-matches-page .admin-bg {
+    background-image:
+        linear-gradient(180deg, rgba(2, 6, 23, 0.84) 0%, rgba(2, 6, 23, 0.96) 100%),
+        url("/images/theme.png");
+}
+
+.admin-matches-main {
+    padding-top: 22px;
+}
+
+.admin-matches-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-matches-title {
+    margin: 0;
+    font-size: 2.25rem;
+    line-height: 1.1;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.admin-matches-table-card {
+    border-radius: 18px;
+    border: 1px solid rgba(226, 232, 240, 0.12);
+    background: rgba(2, 6, 23, 0.4);
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    overflow: hidden;
+}
+
+.admin-matches-table__header {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(2, 6, 23, 0.24);
+}
+
+.admin-matches-table__header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.1;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.admin-matches-table {
+    min-width: 980px;
+}
+
+.admin-matches-table thead th {
+    font-size: 0.74rem;
+    letter-spacing: 0.11em;
+}
+
+.admin-matches-table tbody td {
+    font-size: 0.92rem;
+}
+
+.admin-matches-delete {
+    min-width: 86px;
+}
+
+@media (max-width: 980px) {
+    .admin-matches-title {
+        font-size: 1.85rem;
+    }
+}
+
+@media (max-width: 620px) {
+    .admin-matches-main {
+        padding: 16px;
+    }
+
+    .admin-matches-title {
+        font-size: 1.45rem;
+    }
+
+    .admin-matches-table__header h2 {
+        font-size: 1.28rem;
+    }
+}

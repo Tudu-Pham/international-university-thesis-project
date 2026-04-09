@@ -10,6 +10,10 @@ const getCreateUserPage = (req: Request, res: Response) => {
     return res.render("client/create-user");
 }
 
+const getMatchesPage = (req: Request, res: Response) => {
+    return res.render("admin/matches");
+}
+
 const postCreateUserPage = async (req: Request, res: Response) => {
     const { fullName, username, email, password } = req.body;
     // handle create user
@@ -37,8 +41,13 @@ const DeleteUser = async (req: Request, res: Response) => {
     return res.redirect("/admin")
 }
 
+const ViewUser = async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    return res.render("admin/view");
+}
+
 export {
-    getHomePage, getCreateUserPage, getSignInPage, getAdminDashboard,
+    getHomePage, getCreateUserPage, getSignInPage, getAdminDashboard, getMatchesPage,
     postCreateUserPage,
-    DeleteUser
+    DeleteUser, ViewUser
 };

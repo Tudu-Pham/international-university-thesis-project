@@ -283,6 +283,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.querySelector(".admin-search__input");
     const rows = document.querySelectorAll(".admin-table tbody tr");
 
+    if (!searchInput) return;
+
     searchInput.addEventListener("input", function () {
         const keyword = this.value.trim().toLowerCase();
 
@@ -299,6 +301,63 @@ document.addEventListener("DOMContentLoaded", function () {
                 email.includes(keyword);
 
             row.style.display = match ? "" : "none";
+        });
+    });
+});
+
+// View page interactions
+document.addEventListener("DOMContentLoaded", function () {
+    const editBtn = document.querySelector(".admin-view-profile__edit");
+    const deleteButtons = document.querySelectorAll(".admin-view-delete");
+
+    if (editBtn) {
+        editBtn.addEventListener("click", function () {
+            window.alert("Edit profile action is not implemented yet.");
+        });
+    }
+
+    if (!deleteButtons.length) return;
+
+    deleteButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            const row = btn.closest("tr");
+            if (!row) return;
+
+            const ok = window.confirm("Delete this uploaded match?");
+            if (!ok) return;
+
+            row.remove();
+        });
+    });
+});
+
+// Matches page interactions
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteButtons = document.querySelectorAll(".admin-matches-delete");
+    if (!deleteButtons.length) return;
+
+    deleteButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            const row = btn.closest("tr");
+            if (!row) return;
+
+            const ok = window.confirm("Delete this match?");
+            if (!ok) return;
+
+            row.remove();
+        });
+    });
+});
+
+// Restrict Users nav on Dashboard/Matches
+document.addEventListener("DOMContentLoaded", function () {
+    const blockedUserLinks = document.querySelectorAll("[data-users-nav-popup]");
+    if (!blockedUserLinks.length) return;
+
+    blockedUserLinks.forEach(function (link) {
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+            window.alert('Please choose "view" a user in Dashboard. Thank you');
         });
     });
 });
