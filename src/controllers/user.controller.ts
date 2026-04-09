@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAllUsers, handleCreateUser } from "../services/user.service";
+import { getAllUsers, handleCreateUser, handleDeleteUser } from "services/user.service";
 
 
 const getHomePage = (req: Request, res: Response) => {
@@ -31,7 +31,14 @@ const getAdminDashboard = async (req: Request, res: Response) => {
     });
 }
 
+const DeleteUser = async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    await handleDeleteUser(id);
+    return res.redirect("/admin")
+}
+
 export {
     getHomePage, getCreateUserPage, getSignInPage, getAdminDashboard,
-    postCreateUserPage
+    postCreateUserPage,
+    DeleteUser
 };

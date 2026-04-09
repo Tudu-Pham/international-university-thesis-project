@@ -131,7 +131,6 @@
                                     <th>Full Name</th>
                                     <th>Username</th>
                                     <th>Email</th>
-                                    <th>Password</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -150,15 +149,15 @@
                                         <td>
                                             <%= user.email %>
                                         </td>
-                                        <td>
-                                            <%= user.password %>
-                                        </td>
                                         <td class="admin-table-actions">
-                                            <button type="button"
-                                                class="admin-action admin-action--update">Update</button>
-                                            <button type="button" class="admin-action admin-action--view">View</button>
-                                            <button type="button"
-                                                class="admin-action admin-action--delete">Delete</button>
+                                            <form><button type="submit"
+                                                    class="admin-action admin-action--update">Update</button></form>
+                                            <form><button type="submit"
+                                                    class="admin-action admin-action--view">View</button></form>
+                                            <form action="/delete-user/<%= user.id %>" method="post">
+                                                <button type="submit"
+                                                    class="admin-action admin-action--delete">Delete</button>
+                                            </form>
                                         </td>
 
                                     </tr>

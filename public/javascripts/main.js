@@ -278,3 +278,27 @@
     });
 })();
 
+//search user engine
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.querySelector(".admin-search__input");
+    const rows = document.querySelectorAll(".admin-table tbody tr");
+
+    searchInput.addEventListener("input", function () {
+        const keyword = this.value.trim().toLowerCase();
+
+        rows.forEach(row => {
+            const id = row.children[0]?.innerText.toLowerCase() || "";
+            const name = row.children[1]?.innerText.toLowerCase() || "";
+            const username = row.children[2]?.innerText.toLowerCase() || "";
+            const email = row.children[3]?.innerText.toLowerCase() || "";
+
+            const match =
+                id.includes(keyword) ||
+                name.includes(keyword) ||
+                username.includes(keyword) ||
+                email.includes(keyword);
+
+            row.style.display = match ? "" : "none";
+        });
+    });
+});
