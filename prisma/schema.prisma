@@ -14,9 +14,39 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  name     String? @db.VarChar(255)
-  username String? @db.VarChar(255)
-  email    String? @db.VarChar(255)
-  password String? @db.VarChar(255)
+  id          Int     @id @default(autoincrement())
+  name        String? @db.VarChar(255)
+  username    String  @db.VarChar(255)
+  email       String? @db.VarChar(255)
+  password    String  @db.VarChar(255)
+  accountType String  @db.VarChar(50)
+  avatar      String? @db.VarChar(255)
+
+  @@map("users")
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(100)
+
+  @@map("roles")
+}
+
+model Video {
+  id           Int     @id @default(autoincrement())
+  input_video  String? @db.VarChar(255)
+  output_video String? @db.VarChar(255)
+  status       String? @db.VarChar(255)
+
+  @@map("videos")
+}
+
+model Player {
+  id           Int     @id @default(autoincrement())
+  shirt_number Int?
+  player_name  String? @db.VarChar(255)
+  team         String? @db.VarChar(255)
+  position     String? @db.VarChar(255)
+
+  @@map("players")
 }

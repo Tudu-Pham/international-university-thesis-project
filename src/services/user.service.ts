@@ -10,7 +10,9 @@ const handleCreateUser = async (fullName: string, username: string, email: strin
             name: fullName,
             username: username,
             email: email,
-            password: password
+            password: password,
+            accountType: "",
+
         }
     })
 }
@@ -29,7 +31,7 @@ const handleDeleteUser = async (id: string) => {
 const getUserByID = async (id: string) => {
     try {
         const connection = await getConnection();
-        const sql = 'SELECT * FROM `user` WHERE `id` = ? ';
+        const sql = 'SELECT * FROM `users` WHERE `id` = ? ';
         const values = [id];
 
         const [result, fields] = await connection.execute(sql, values);

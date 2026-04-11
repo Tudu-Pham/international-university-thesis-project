@@ -331,24 +331,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Matches page interactions
-document.addEventListener("DOMContentLoaded", function () {
-    const deleteButtons = document.querySelectorAll(".admin-matches-delete");
-    if (!deleteButtons.length) return;
-
-    deleteButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            const row = btn.closest("tr");
-            if (!row) return;
-
-            const ok = window.confirm("Delete this match?");
-            if (!ok) return;
-
-            row.remove();
-        });
-    });
-});
-
 // Restrict Users nav on Dashboard/Matches
 document.addEventListener("DOMContentLoaded", function () {
     const blockedUserLinks = document.querySelectorAll("[data-users-nav-popup]");
