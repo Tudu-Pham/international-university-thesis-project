@@ -49,8 +49,16 @@ const ViewUser = async (req: Request, res: Response) => {
     });
 }
 
+const getMainPage = (req: Request, res: Response) => {
+    return res.render("client/main");
+}
+
+const getProfile = (req: Request, res: Response) => {
+    return res.render("client/profile");
+}
+
 export {
-    getHomePage, getCreateUserPage, getSignInPage, getAdminDashboard, getMatchesPage,
+    getHomePage, getCreateUserPage, getSignInPage, getAdminDashboard, getMatchesPage, getMainPage, getProfile,
     postCreateUserPage,
     DeleteUser, ViewUser
 };

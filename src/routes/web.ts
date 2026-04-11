@@ -1,5 +1,5 @@
 import express, { Express } from "express";
-import { DeleteUser, getAdminDashboard, getCreateUserPage, getHomePage, getMatchesPage, getSignInPage, postCreateUserPage, ViewUser } from "controllers/user.controller";
+import { DeleteUser, getAdminDashboard, getCreateUserPage, getHomePage, getMainPage, getMatchesPage, getProfile, getSignInPage, postCreateUserPage, ViewUser } from "controllers/user.controller";
 
 const router = express.Router();
 
@@ -12,6 +12,8 @@ const webRoutes = (app: Express) => {
     router.get("/view-user/:id", ViewUser); //view each user page
     router.get("/matches", getMatchesPage); //view matches page from admin page
     router.post("/delete-user/:id", DeleteUser); //delete user from admin
+    router.get("/football-analytics", getMainPage);
+    router.get("/profile", getProfile); //view user's profile, history
 
     app.use("/", router);
 }

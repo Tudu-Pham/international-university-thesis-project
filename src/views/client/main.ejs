@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Analytics</title>
+    <link rel="icon" type="image/png" href="/images/logo.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="page-fa-analyze">
+    <div class="fa-analyze__bg" aria-hidden="true"></div>
+    <div class="fa-analyze__veil" aria-hidden="true"></div>
+
+    <div class="fa-shell">
+        <aside class="fa-sidebar" aria-label="Main navigation">
+            <a class="fa-sidebar__link fa-sidebar__link--active" href="/football-analytics" title="Home"
+                aria-current="page">
+                <svg class="fa-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    aria-hidden="true">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+            </a>
+            <a class="fa-sidebar__link" href="/profile" title="Profile">
+                <svg class="fa-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    aria-hidden="true">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+            </a>
+            <a class="fa-sidebar__link" href="/" title="Exit">
+                <svg class="fa-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+            </a>
+        </aside>
+
+        <div class="fa-workspace">
+            <header class="fa-topbar" role="banner">
+                <div class="fa-topbar__brand">
+                    <img src="/images/logo.png" alt="" class="fa-topbar__logo" width="44" height="44">
+                    <a href="/" class="simple-link">
+                        <div class="fa-topbar__brand-text">
+                            <span class="fa-topbar__brand-football">FOOTBALL</span>
+                            <span class="fa-topbar__brand-analytics">ANALYTICS</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="fa-topbar__user">
+                    <div class="fa-user-chip">
+                        <span class="fa-user-chip__avatar" aria-hidden="true">
+                            <img src="/images/logo.png" alt="">
+                        </span>
+                        <span class="fa-user-chip__name">Admin Alex Johnson</span>
+                    </div>
+                    <a href="/signin" class="fa-btn-logout fa-btn-logout--link">Log out</a>
+                </div>
+            </header>
+
+            <main class="fa-main">
+                <div class="fa-top-panels">
+                    <section class="fa-panel fa-panel--upload" aria-labelledby="fa-upload-heading">
+                        <h2 id="fa-upload-heading" class="visually-hidden">Upload clip and teams</h2>
+                        <form id="fa-team-form" class="fa-upload-block" novalidate>
+                            <div class="fa-dropzone" data-fa-dropzone>
+                                <input type="file" id="fa-clip-input" class="fa-dropzone__input" name="clip"
+                                    accept="video/mp4,video/x-msvideo,.mp4,.avi" aria-label="Upload match clip">
+                                <label for="fa-clip-input" class="fa-dropzone__label">
+                                    <span class="fa-dropzone__icon" aria-hidden="true">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="1.5">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                            <polyline points="17 8 12 3 7 8" />
+                                            <line x1="12" y1="3" x2="12" y2="15" />
+                                        </svg>
+                                    </span>
+                                    <span class="fa-dropzone__text">Drop clip or click to upload (Video MP4, AVI, max
+                                        500MB)</span>
+                                    <span class="fa-btn-choose">Choose clip</span>
+                                </label>
+                            </div>
+                            <div class="fa-panel__teams">
+                                <div class="fa-field">
+                                    <label class="fa-field__label" for="fa-team-a-name">Team A</label>
+                                    <input class="fa-field__input" type="text" id="fa-team-a-name" name="teamAName"
+                                        placeholder="Team A" autocomplete="organization">
+                                </div>
+                                <div class="fa-field">
+                                    <label class="fa-field__label" for="fa-team-b-name">Team B</label>
+                                    <input class="fa-field__input" type="text" id="fa-team-b-name" name="teamBName"
+                                        placeholder="Team B" autocomplete="organization">
+                                </div>
+                            </div>
+                            <button type="submit" class="fa-btn-primary fa-btn-primary--block">Submit</button>
+                        </form>
+                    </section>
+
+                    <section class="fa-panel fa-panel--analyze" aria-labelledby="fa-analyze-heading">
+                        <h2 id="fa-analyze-heading" class="fa-panel__title">Analyze Player</h2>
+                        <form id="fa-analyze-player-form" class="fa-analyze-form" novalidate>
+                            <div class="fa-analyze-form__grid">
+                                <div class="fa-field">
+                                    <label class="fa-field__label" for="fa-shirt-number">Shirt number</label>
+                                    <input class="fa-field__input" type="number" id="fa-shirt-number" name="shirtNumber"
+                                        min="0" max="999" placeholder="—">
+                                </div>
+                                <div class="fa-field">
+                                    <label class="fa-field__label" for="fa-player-name">Player name</label>
+                                    <input class="fa-field__input" type="text" id="fa-player-name" name="playerName"
+                                        placeholder="—" autocomplete="name">
+                                </div>
+                                <div class="fa-field">
+                                    <label class="fa-field__label" for="fa-player-position">Player position</label>
+                                    <select class="fa-field__select" id="fa-player-position" name="playerPosition">
+                                        <option value="goalkeeper">Goalkeeper</option>
+                                        <option value="another-position">Another position</option>
+                                    </select>
+                                </div>
+                                <div class="fa-field">
+                                    <label class="fa-field__label" for="fa-team-select">Team</label>
+                                    <select class="fa-field__select" id="fa-team-select" name="team">
+                                        <option value="team-a">Team A</option>
+                                        <option value="team-b">Team B</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="button" class="fa-btn-primary fa-btn-primary--block">Analyze player</button>
+                        </form>
+                    </section>
+                </div>
+
+                <section class="fa-players" aria-labelledby="fa-players-heading">
+                    <div class="fa-players__head">
+                        <h2 id="fa-players-heading" class="fa-players__title">Recognized players list</h2>
+                        <div class="fa-search">
+                            <svg class="fa-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" aria-hidden="true">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input type="search" class="fa-search__input" placeholder="Search by name/position"
+                                aria-label="Search players">
+                        </div>
+                    </div>
+
+                    <div class="fa-table-wrap">
+                        <table class="fa-table">
+                            <thead>
+                                <tr>
+                                    <th>Shirt number</th>
+                                    <th>Player name</th>
+                                    <th>Position</th>
+                                    <th>Team</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>19</td>
+                                    <td>James Ward</td>
+                                    <td>Midfielder</td>
+                                    <td>Team A</td>
+                                    <td>
+                                        <div class="fa-table__actions">
+                                            <button type="button" class="fa-action fa-action--confirm"
+                                                aria-label="Confirm upgrade">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="3">
+                                                    <polyline points="20 6 9 17 4 12" />
+                                                </svg>
+                                                Upgrade
+                                            </button>
+                                            <button type="button" class="fa-action fa-action--delete"
+                                                aria-label="Delete player">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="3">
+                                                    <polyline points="20 6 9 17 4 12" />
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Marcus Lee</td>
+                                    <td>Defender</td>
+                                    <td>Team B</td>
+                                    <td>
+                                        <div class="fa-table__actions">
+                                            <button type="button" class="fa-action fa-action--confirm"
+                                                aria-label="Confirm upgrade">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="3">
+                                                    <polyline points="20 6 9 17 4 12" />
+                                                </svg>
+                                                Upgrade
+                                            </button>
+                                            <button type="button" class="fa-action fa-action--delete"
+                                                aria-label="Delete player">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="3">
+                                                    <polyline points="20 6 9 17 4 12" />
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="fa-players__footer">
+                        <button type="button" class="fa-btn-primary fa-btn-primary--wide">Analyze clip</button>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="/javascripts/main.js" defer></script>
+</body>
+
+</html>

@@ -387,3 +387,237 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("resize", updateParallax, { passive: true });
     updateParallax();
 });
+
+// Football Analytics — team Submit updates Team dropdown; dropzone highlight; players search
+(function () {
+    var teamForm = document.getElementById("fa-team-form");
+    var teamSelect = document.getElementById("fa-team-select");
+    var teamAInput = document.getElementById("fa-team-a-name");
+    var teamBInput = document.getElementById("fa-team-b-name");
+
+    if (teamForm && teamSelect && teamAInput && teamBInput) {
+        teamForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            var nameA = (teamAInput.value || "").trim();
+            var nameB = (teamBInput.value || "").trim();
+
+            if (!nameA) nameA = "Team A";
+            if (!nameB) nameB = "Team B";
+
+            var previousValue = teamSelect.value;
+
+            teamSelect.innerHTML = "";
+
+            var optA = document.createElement("option");
+            optA.value = "team-a";
+            optA.textContent = nameA;
+            teamSelect.appendChild(optA);
+
+            var optB = document.createElement("option");
+            optB.value = "team-b";
+            optB.textContent = nameB;
+            teamSelect.appendChild(optB);
+
+            if (previousValue === "team-a" || previousValue === "team-b") {
+                teamSelect.value = previousValue;
+            } else {
+                teamSelect.selectedIndex = 0;
+            }
+        });
+    }
+
+    var dropzone = document.querySelector("[data-fa-dropzone]");
+    if (dropzone) {
+        ["dragenter", "dragover"].forEach(function (ev) {
+            dropzone.addEventListener(ev, function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.add("fa-dropzone--drag");
+            });
+        });
+        ["dragleave", "drop"].forEach(function (ev) {
+            dropzone.addEventListener(ev, function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.remove("fa-dropzone--drag");
+            });
+        });
+    }
+
+    var faSearch = document.querySelector(".page-fa-analyze:not(.page-fa-profile) .fa-search__input");
+    var faRows = document.querySelectorAll(
+        ".page-fa-analyze:not(.page-fa-profile) .fa-table tbody tr"
+    );
+    if (faSearch && faRows.length) {
+        faSearch.addEventListener("input", function () {
+            var keyword = (faSearch.value || "").trim().toLowerCase();
+            Array.prototype.forEach.call(faRows, function (row) {
+                var text = row.textContent ? row.textContent.toLowerCase() : "";
+                row.style.display = !keyword || text.includes(keyword) ? "" : "none";
+            });
+        });
+    }
+})();
+
+// Profile page — update modal, clips search & date sort
+(function () {
+    if (!document.body.classList.contains("page-fa-profile")) return;
+
+    var modal = document.getElementById("fa-prof-update-modal");
+    var dialog = modal ? modal.querySelector(".fa-prof-modal__dialog") : null;
+    var openBtns = document.querySelectorAll("[data-fa-prof-open-update]");
+    var closeEls = modal ? modal.querySelectorAll("[data-fa-prof-close-modal]") : [];
+
+    function openModal() {
+        if (!modal) return;
+        modal.removeAttribute("hidden");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        var focusTarget = modal.querySelector(
+            "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+        );
+        if (focusTarget) focusTarget.focus();
+    }
+
+    function closeModal() {
+        if (!modal) return;
+        modal.setAttribute("hidden", "");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+    }
+
+    Array.prototype.forEach.call(openBtns, function (btn) {
+        btn.addEventListener("click", openModal);
+    });
+
+    Array.prototype.forEach.call(closeEls, function (el) {
+        el.addEventListener("click", closeModal);
+    });
+
+    var filterRoot = document.querySelector("[data-fa-prof-filter]");
+    var filterTrigger = document.getElementById("fa-prof-filter-trigger");
+    var filterList = document.getElementById("fa-prof-filter-list");
+    var filterCurrent = document.getElementById("fa-prof-filter-current");
+
+    function closeProfFilter() {
+        if (!filterRoot || !filterTrigger || !filterList) return;
+        filterRoot.classList.remove("fa-prof-filter--open");
+        filterTrigger.setAttribute("aria-expanded", "false");
+        filterList.setAttribute("hidden", "");
+    }
+
+    function openProfFilter() {
+        if (!filterRoot || !filterTrigger || !filterList) return;
+        filterRoot.classList.add("fa-prof-filter--open");
+        filterTrigger.setAttribute("aria-expanded", "true");
+        filterList.removeAttribute("hidden");
+    }
+
+    function toggleProfFilter() {
+        if (!filterList) return;
+        if (filterList.hasAttribute("hidden")) openProfFilter();
+        else closeProfFilter();
+    }
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key !== "Escape") return;
+        if (modal && !modal.hasAttribute("hidden")) {
+            closeModal();
+            return;
+        }
+        if (filterRoot && filterRoot.classList.contains("fa-prof-filter--open")) {
+            closeProfFilter();
+        }
+    });
+
+    var updateForm = document.getElementById("fa-prof-update-form");
+    if (updateForm) {
+        updateForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            closeModal();
+            window.alert(
+                "Update request recorded. The server does not process this yet — UI demo only."
+            );
+            updateForm.reset();
+        });
+    }
+
+    var tbody = document.getElementById("fa-prof-clips-tbody");
+    var sortInput = document.getElementById("fa-prof-filter-sort");
+    var profSearch = document.getElementById("fa-prof-clips-search");
+
+    function renumberRows() {
+        if (!tbody) return;
+        var n = 1;
+        Array.prototype.forEach.call(tbody.querySelectorAll("tr"), function (row) {
+            var firstCell = row.cells[0];
+            if (!firstCell) return;
+            if (row.style.display === "none") {
+                firstCell.textContent = "—";
+                return;
+            }
+            firstCell.textContent = String(n++);
+        });
+    }
+
+    function sortClips() {
+        if (!tbody || !sortInput) return;
+        var rows = Array.prototype.slice.call(tbody.querySelectorAll("tr"));
+        var dir = sortInput.value === "oldest" ? 1 : -1;
+        rows.sort(function (a, b) {
+            var ta = parseInt(a.getAttribute("data-fa-prof-date") || "0", 10);
+            var tb = parseInt(b.getAttribute("data-fa-prof-date") || "0", 10);
+            return (ta - tb) * dir;
+        });
+        rows.forEach(function (row) {
+            tbody.appendChild(row);
+        });
+        renumberRows();
+    }
+
+    function setFilterValue(value) {
+        if (!sortInput || !filterCurrent || !filterList) return;
+        sortInput.value = value;
+        var labels = { newest: "Newest to oldest", oldest: "Oldest to newest" };
+        filterCurrent.textContent = labels[value] || value;
+        Array.prototype.forEach.call(filterList.querySelectorAll('[role="option"]'), function (opt) {
+            var v = opt.getAttribute("data-value");
+            var sel = v === value;
+            opt.setAttribute("aria-selected", sel ? "true" : "false");
+            opt.classList.toggle("fa-prof-filter__option--active", sel);
+        });
+        sortClips();
+    }
+
+    if (filterTrigger && filterList && filterRoot) {
+        filterTrigger.addEventListener("click", function (e) {
+            e.stopPropagation();
+            toggleProfFilter();
+        });
+        filterList.addEventListener("click", function (e) {
+            var opt = e.target.closest("[data-value]");
+            if (!opt || opt.getAttribute("role") !== "option") return;
+            setFilterValue(opt.getAttribute("data-value") || "newest");
+            closeProfFilter();
+            filterTrigger.focus();
+        });
+        document.addEventListener("click", function () {
+            closeProfFilter();
+        });
+        filterRoot.addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
+    }
+
+    if (profSearch && tbody) {
+        profSearch.addEventListener("input", function () {
+            var keyword = (profSearch.value || "").trim().toLowerCase();
+            Array.prototype.forEach.call(tbody.querySelectorAll("tr"), function (row) {
+                var text = row.textContent ? row.textContent.toLowerCase() : "";
+                row.style.display = !keyword || text.includes(keyword) ? "" : "none";
+            });
+            renumberRows();
+        });
+    }
+})();
