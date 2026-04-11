@@ -343,3 +343,47 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+// Landing (home): parallax backgrounds + subtle foreground drift on scroll
+document.addEventListener("DOMContentLoaded", function () {
+    if (!document.body.classList.contains("page-home")) return;
+
+    var heroBg = document.querySelector('[data-home-parallax-bg="hero"]');
+    var featuresBg = document.querySelector('[data-home-parallax-bg="features"]');
+    var heroVisual = document.querySelector("[data-home-parallax]");
+    var featuresSection = document.getElementById("features");
+
+    function prefersReducedMotion() {
+        return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    function updateParallax() {
+        if (prefersReducedMotion()) {
+            if (heroBg) heroBg.style.transform = "";
+            if (featuresBg) featuresBg.style.transform = "";
+            if (heroVisual) heroVisual.style.transform = "";
+            return;
+        }
+
+        var y = window.scrollY || window.pageYOffset;
+
+        if (heroBg) {
+            heroBg.style.transform = "translate3d(0," + y * 0.22 + "px,0)";
+        }
+
+        if (featuresBg && featuresSection) {
+            var rel = Math.max(0, y - featuresSection.offsetTop + window.innerHeight * 0.12);
+            featuresBg.style.transform = "translate3d(0," + rel * 0.16 + "px,0)";
+        }
+
+        if (heroVisual) {
+            var speed = parseFloat(heroVisual.getAttribute("data-home-parallax") || "0.04");
+            if (isNaN(speed)) speed = 0.04;
+            heroVisual.style.transform = "translate3d(0," + -y * speed + "px,0)";
+        }
+    }
+
+    window.addEventListener("scroll", updateParallax, { passive: true });
+    window.addEventListener("resize", updateParallax, { passive: true });
+    updateParallax();
+});
