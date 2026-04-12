@@ -627,7 +627,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!document.body.classList.contains("page-fa-detail-match")) return;
 
     var conicEl = document.getElementById("fa-dm-pie-conic");
-    var pctEl = document.getElementById("fa-dm-pie-pct");
     var pieRoot = document.getElementById("fa-dm-pie");
     var legendA = document.querySelector("[data-fa-dm-legend-a]");
     var legendB = document.querySelector("[data-fa-dm-legend-b]");
@@ -645,9 +644,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (conicEl) {
             conicEl.style.background =
                 "conic-gradient(#4ade80 0% " + a + "%, #3b82f6 " + a + "% 100%)";
-        }
-        if (pctEl) {
-            pctEl.textContent = Math.round(a) + "%";
         }
         if (legendA) {
             legendA.textContent = Math.round(a) + "%";

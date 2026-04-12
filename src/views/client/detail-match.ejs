@@ -56,9 +56,8 @@
                 <div class="fa-dm-grid">
                     <section class="fa-dm-video-section" aria-label="Match video">
                         <div class="fa-dm-video-card">
-                            <video class="fa-dm-video" controls playsinline preload="metadata"
-                                poster="/images/theme.png">
-                                <source src="/videos/SNGS-021.mp4" type="video/mp4">
+                            <video class="fa-dm-video" controls playsinline webkit-playsinline preload="metadata"
+                                poster="/images/theme.png" src="/videos/TEST.mp4">
                                 Your browser does not support the video tag.
                             </video>
                         </div>
@@ -68,22 +67,22 @@
                         <div class="fa-dm-card fa-dm-card--possession">
                             <h2 class="fa-dm-card__title">Ball Possession</h2>
                             <div class="fa-dm-pie-wrap">
-                                <div class="fa-dm-pie" id="fa-dm-pie" role="img"
+                                <div class="fa-dm-pie fa-dm-pie--solid" id="fa-dm-pie" role="img"
                                     aria-label="Ball possession distribution">
                                     <div class="fa-dm-pie__conic" id="fa-dm-pie-conic"></div>
-                                    <div class="fa-dm-pie__hole"></div>
-                                    <div class="fa-dm-pie__pct" id="fa-dm-pie-pct">65%</div>
                                 </div>
                             </div>
                             <div class="fa-dm-pie-legend" id="fa-dm-pie-legend">
                                 <span class="fa-dm-pie-legend__item">
                                     <span class="fa-dm-pie-legend__dot fa-dm-pie-legend__dot--a"
                                         aria-hidden="true"></span>
+                                    <span class="fa-dm-pie-legend__label">Team A</span>
                                     <span class="fa-dm-pie-legend__val" data-fa-dm-legend-a>65%</span>
                                 </span>
                                 <span class="fa-dm-pie-legend__item">
                                     <span class="fa-dm-pie-legend__dot fa-dm-pie-legend__dot--b"
                                         aria-hidden="true"></span>
+                                    <span class="fa-dm-pie-legend__label">Team B</span>
                                     <span class="fa-dm-pie-legend__val" data-fa-dm-legend-b>35%</span>
                                 </span>
                             </div>
@@ -106,6 +105,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Shirt Number</th>
+                                    <th scope="col">Team</th>
                                     <th scope="col">Player Name</th>
                                     <th scope="col">Average Speed</th>
                                     <th scope="col">Distance</th>
@@ -115,6 +115,7 @@
                             <tbody>
                                 <tr>
                                     <td>17</td>
+                                    <td><span class="fa-dm-table__team fa-dm-table__team--a">Team A</span></td>
                                     <td>Phan Tấn Tài</td>
                                     <td>32.4 km/h</td>
                                     <td>9.31 km</td>
@@ -128,6 +129,7 @@
                                 </tr>
                                 <tr>
                                     <td>19</td>
+                                    <td><span class="fa-dm-table__team fa-dm-table__team--a">Team A</span></td>
                                     <td>Nguyễn Quang Hải</td>
                                     <td>31.2 km/h</td>
                                     <td>8.87 km</td>
@@ -141,6 +143,7 @@
                                 </tr>
                                 <tr>
                                     <td>9</td>
+                                    <td><span class="fa-dm-table__team fa-dm-table__team--b">Team B</span></td>
                                     <td>Nguyễn Văn Toàn</td>
                                     <td>33.1 km/h</td>
                                     <td>8.34 km</td>
@@ -154,6 +157,7 @@
                                 </tr>
                                 <tr>
                                     <td>18</td>
+                                    <td><span class="fa-dm-table__team fa-dm-table__team--b">Team B</span></td>
                                     <td>Nguyễn Văn Tùng</td>
                                     <td>30.5 km/h</td>
                                     <td>6.94 km</td>

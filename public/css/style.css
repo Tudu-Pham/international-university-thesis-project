@@ -3291,26 +3291,10 @@ html.home-root body.page-home {
     box-shadow: 0 0 28px rgba(74, 222, 128, 0.15);
 }
 
-.fa-dm-pie__hole {
-    position: absolute;
-    inset: 22px;
-    border-radius: 50%;
-    background: rgba(15, 23, 42, 0.96);
-    border: 1px solid rgba(51, 65, 85, 0.5);
-    pointer-events: none;
-}
-
-.fa-dm-pie__pct {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.65rem;
-    font-weight: 800;
-    color: #f8fafc;
-    letter-spacing: -0.02em;
-    pointer-events: none;
+.fa-dm-pie--solid .fa-dm-pie__conic {
+    box-shadow:
+        0 0 0 1px rgba(148, 163, 184, 0.12),
+        0 8px 28px rgba(0, 0, 0, 0.35);
 }
 
 .fa-dm-pie-legend {
@@ -3326,10 +3310,17 @@ html.home-root body.page-home {
 .fa-dm-pie-legend__item {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.4rem;
     font-size: 0.875rem;
     font-weight: 700;
     color: #e2e8f0;
+}
+
+.fa-dm-pie-legend__label {
+    font-weight: 600;
+    font-size: 0.8125rem;
+    color: rgba(226, 232, 240, 0.9);
+    letter-spacing: 0.02em;
 }
 
 .fa-dm-pie-legend__dot {
@@ -3382,9 +3373,32 @@ html.home-root body.page-home {
 
 .fa-dm-table {
     width: 100%;
-    min-width: 720px;
+    min-width: 800px;
     border-collapse: collapse;
     font-size: 0.875rem;
+}
+
+.fa-dm-table__team {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.fa-dm-table__team--a {
+    color: #86efac;
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(74, 222, 128, 0.35);
+}
+
+.fa-dm-table__team--b {
+    color: #93c5fd;
+    background: rgba(59, 130, 246, 0.12);
+    border-color: rgba(59, 130, 246, 0.35);
 }
 
 .fa-dm-table thead th {
