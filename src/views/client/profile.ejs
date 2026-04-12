@@ -10,6 +10,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            const avatarFile = $("#avatarFile");
+            const avatarPreview = $("#avatarPreview");
+            let avatarBlobUrl = null;
+            avatarFile.change(function (e) {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                if (avatarBlobUrl) URL.revokeObjectURL(avatarBlobUrl);
+                avatarBlobUrl = URL.createObjectURL(file);
+                avatarPreview.attr("src", avatarBlobUrl);
+                avatarPreview.css({ "display": "block" });
+            });
+            $("#fa-prof-update-form").on("reset", function () {
+                if (avatarBlobUrl) {
+                    URL.revokeObjectURL(avatarBlobUrl);
+                    avatarBlobUrl = null;
+                }
+                avatarPreview.attr("src", "").css({ "display": "none" });
+            });
+        });
+    </script>
 </head>
 
 <body class="page-fa-analyze page-fa-profile">
@@ -56,9 +79,9 @@
                 <div class="fa-topbar__user">
                     <div class="fa-user-chip">
                         <span class="fa-user-chip__avatar" aria-hidden="true">
-                            <img src="/images/logo.png" alt="">
+                            <img src="/images/default_avatar.jpg" alt="">
                         </span>
-                        <span class="fa-user-chip__name">Admin Alex Johnson</span>
+                        <span class="fa-user-chip__name">Alex Johnson</span>
                     </div>
                     <a href="/signin" class="fa-btn-logout fa-btn-logout--link">Log out</a>
                 </div>
@@ -67,7 +90,7 @@
             <div class="fa-prof-layout">
                 <aside class="fa-prof-aside" aria-label="Profile information">
                     <div class="fa-prof-avatar-ring">
-                        <img src="/images/demo2.png" alt="" class="fa-prof-avatar" width="120" height="120">
+                        <img src="/images/default_avatar.jpg" alt="" class="fa-prof-avatar" width="120" height="120">
                     </div>
                     <h1 class="fa-prof-name">Alex Johnson</h1>
                     <p class="fa-prof-handle">@alexjohnson</p>
@@ -514,9 +537,10 @@
             <form class="fa-prof-modal__form" id="fa-prof-update-form" novalidate>
                 <p class="fa-prof-modal__hint">Only fill in the fields you want to change — all fields are optional.</p>
                 <div class="fa-field">
-                    <label class="fa-field__label" for="fa-prof-up-avatar">Avatar</label>
-                    <input class="fa-field__input fa-prof-modal__file" type="file" id="fa-prof-up-avatar" name="avatar"
-                        accept="image/*">
+                    <label class="fa-field__label" for="avatarFile">Avatar</label>
+                    <input class="form-control fa-field__input fa-prof-modal__file" type="file" id="avatarFile"
+                        name="avatar" accept=".png, .jpg, .jpeg">
+                    <img style="max-height: 250px; display: none;" alt="avatar preview" id="avatarPreview" />
                 </div>
                 <div class="fa-field">
                     <label class="fa-field__label" for="fa-prof-up-name">Name</label>

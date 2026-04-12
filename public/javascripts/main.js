@@ -621,3 +621,60 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 })();
+
+// Match detail — ball possession pie (data from #fa-dm-match-data or API later)
+(function () {
+    if (!document.body.classList.contains("page-fa-detail-match")) return;
+
+    var conicEl = document.getElementById("fa-dm-pie-conic");
+    var pctEl = document.getElementById("fa-dm-pie-pct");
+    var pieRoot = document.getElementById("fa-dm-pie");
+    var legendA = document.querySelector("[data-fa-dm-legend-a]");
+    var legendB = document.querySelector("[data-fa-dm-legend-b]");
+    var dataEl = document.getElementById("fa-dm-match-data");
+
+    function clampPct(n) {
+        var x = Number(n);
+        if (isNaN(x)) return 65;
+        return Math.min(100, Math.max(0, x));
+    }
+
+    function setPossession(teamAPct) {
+        var a = clampPct(teamAPct);
+        var b = 100 - a;
+        if (conicEl) {
+            conicEl.style.background =
+                "conic-gradient(#4ade80 0% " + a + "%, #3b82f6 " + a + "% 100%)";
+        }
+        if (pctEl) {
+            pctEl.textContent = Math.round(a) + "%";
+        }
+        if (legendA) {
+            legendA.textContent = Math.round(a) + "%";
+        }
+        if (legendB) {
+            legendB.textContent = Math.round(b) + "%";
+        }
+        if (pieRoot) {
+            pieRoot.setAttribute(
+                "aria-label",
+                "Ball possession " + Math.round(a) + " percent, " + Math.round(b) + " percent"
+            );
+        }
+    }
+
+    var initial = 65;
+    if (dataEl && dataEl.textContent) {
+        try {
+            var parsed = JSON.parse(dataEl.textContent);
+            if (parsed && typeof parsed.teamAPossession === "number") {
+                initial = parsed.teamAPossession;
+            }
+        } catch (e) {
+            // keep default
+        }
+    }
+    setPossession(initial);
+
+    window.faDetailMatchSetPossession = setPossession;
+})();

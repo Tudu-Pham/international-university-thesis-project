@@ -57,8 +57,12 @@ const getProfile = (req: Request, res: Response) => {
     return res.render("client/profile");
 }
 
+const getDetailMatchPage = (req: Request, res: Response) => {
+    return res.render("client/detail-match", { possessionTeamA: 65 });
+};
+
 export {
-    getHomePage, getCreateUserPage, getSignInPage, getAdminDashboard, getMatchesPage, getMainPage, getProfile,
+    getHomePage, getCreateUserPage, getSignInPage, getAdminDashboard, getMatchesPage, getMainPage, getProfile, getDetailMatchPage,
     postCreateUserPage,
     DeleteUser, ViewUser
 };

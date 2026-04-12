@@ -133,6 +133,7 @@
                                     <th>Full Name</th>
                                     <th>Username</th>
                                     <th>Email</th>
+                                    <th>Role</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -150,6 +151,9 @@
                                         </td>
                                         <td>
                                             <%= user.email %>
+                                        </td>
+                                        <td>
+                                            <%= user.role && user.role.name ? String(user.role.name).toUpperCase() : '—' %>
                                         </td>
                                         <td class="admin-table-actions">
                                             <form action="/view-user/<%= user.id %>" method="get"><button type="submit"

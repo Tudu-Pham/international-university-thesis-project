@@ -21,32 +21,50 @@ model User {
   password    String  @db.VarChar(255)
   accountType String  @db.VarChar(50)
   avatar      String? @db.VarChar(255)
+  role_id     Int
+  role        Role    @relation(fields: [role_id], references: [id])
+  videos      Video[]
 
   @@map("users")
 }
 
 model Role {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(100)
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(100)
+  users User[]
 
   @@map("roles")
 }
 
 model Video {
-  id           Int     @id @default(autoincrement())
-  input_video  String? @db.VarChar(255)
-  output_video String? @db.VarChar(255)
-  status       String? @db.VarChar(255)
+  id           Int           @id @default(autoincrement())
+  input_video  String?       @db.VarChar(255)
+  output_video String?       @db.VarChar(255)
+  status       String?       @db.VarChar(255)
+  videoPlayers VideoPlayer[]
+  user_id      Int
+  user         User          @relation(fields: [user_id], references: [id])
 
   @@map("videos")
 }
 
 model Player {
-  id           Int     @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   shirt_number Int?
-  player_name  String? @db.VarChar(255)
-  team         String? @db.VarChar(255)
-  position     String? @db.VarChar(255)
+  player_name  String?       @db.VarChar(255)
+  team         String?       @db.VarChar(255)
+  position     String?       @db.VarChar(255)
+  videoPlayers VideoPlayer[]
 
   @@map("players")
+}
+
+model VideoPlayer {
+  id        Int    @id @default(autoincrement())
+  video_id  Int
+  video     Video  @relation(fields: [video_id], references: [id])
+  player_id Int
+  player    Player @relation(fields: [player_id], references: [id])
+
+  @@map("video_players")
 }

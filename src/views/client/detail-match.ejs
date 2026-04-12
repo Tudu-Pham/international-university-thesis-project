@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match detail — Football Analytics</title>
+    <link rel="icon" type="image/png" href="/images/logo.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="application/json"
+        id="fa-dm-match-data"><%- JSON.stringify({ teamAPossession: typeof possessionTeamA === 'number' ? possessionTeamA : 65 }) %></script>
+</head>
+
+<body class="page-fa-analyze page-fa-detail-match">
+    <div class="fa-analyze__bg" aria-hidden="true"></div>
+    <div class="fa-analyze__veil" aria-hidden="true"></div>
+
+    <div class="fa-shell">
+        <aside class="fa-sidebar fa-sidebar--detail-back" aria-label="Match navigation">
+            <a class="fa-sidebar__link fa-sidebar__link--back" href="/football-analytics" title="Back">
+                <svg class="fa-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    aria-hidden="true">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
+                <span class="fa-sidebar__back-label">Back</span>
+            </a>
+        </aside>
+
+        <div class="fa-workspace">
+            <header class="fa-topbar" role="banner">
+                <div class="fa-topbar__brand">
+                    <img src="/images/logo.png" alt="" class="fa-topbar__logo" width="44" height="44">
+                    <a href="/" class="simple-link">
+                        <div class="fa-topbar__brand-text">
+                            <span class="fa-topbar__brand-football">FOOTBALL</span>
+                            <span class="fa-topbar__brand-analytics">ANALYTICS</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="fa-topbar__user">
+                    <div class="fa-user-chip">
+                        <span class="fa-user-chip__avatar" aria-hidden="true">
+                            <img src="/images/default_avatar.jpg" alt="">
+                        </span>
+                        <span class="fa-user-chip__name">Nguyễn Văn A</span>
+                    </div>
+                    <a href="/signin" class="fa-btn-logout fa-btn-logout--link">Log out</a>
+                </div>
+            </header>
+
+            <main class="fa-dm-main">
+                <div class="fa-dm-grid">
+                    <section class="fa-dm-video-section" aria-label="Match video">
+                        <div class="fa-dm-video-card">
+                            <video class="fa-dm-video" controls playsinline preload="metadata"
+                                poster="/images/theme.png">
+                                <source src="/videos/SNGS-021.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </section>
+
+                    <aside class="fa-dm-rail" aria-label="Match insights">
+                        <div class="fa-dm-card fa-dm-card--possession">
+                            <h2 class="fa-dm-card__title">Ball Possession</h2>
+                            <div class="fa-dm-pie-wrap">
+                                <div class="fa-dm-pie" id="fa-dm-pie" role="img"
+                                    aria-label="Ball possession distribution">
+                                    <div class="fa-dm-pie__conic" id="fa-dm-pie-conic"></div>
+                                    <div class="fa-dm-pie__hole"></div>
+                                    <div class="fa-dm-pie__pct" id="fa-dm-pie-pct">65%</div>
+                                </div>
+                            </div>
+                            <div class="fa-dm-pie-legend" id="fa-dm-pie-legend">
+                                <span class="fa-dm-pie-legend__item">
+                                    <span class="fa-dm-pie-legend__dot fa-dm-pie-legend__dot--a"
+                                        aria-hidden="true"></span>
+                                    <span class="fa-dm-pie-legend__val" data-fa-dm-legend-a>65%</span>
+                                </span>
+                                <span class="fa-dm-pie-legend__item">
+                                    <span class="fa-dm-pie-legend__dot fa-dm-pie-legend__dot--b"
+                                        aria-hidden="true"></span>
+                                    <span class="fa-dm-pie-legend__val" data-fa-dm-legend-b>35%</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="fa-dm-card fa-dm-card--minimap">
+                            <h2 class="fa-dm-card__title">Mini-map</h2>
+                            <div class="fa-dm-minimap-frame">
+                                <img src="/images/minimap.png" alt="Tactical minimap of player positions" width="640"
+                                    height="360" class="fa-dm-minimap-img" loading="lazy">
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+
+                <section class="fa-dm-stats" aria-labelledby="fa-dm-stats-heading">
+                    <h2 id="fa-dm-stats-heading" class="fa-dm-stats__title">Player Statistics</h2>
+                    <div class="fa-dm-table-wrap">
+                        <table class="fa-dm-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Shirt Number</th>
+                                    <th scope="col">Player Name</th>
+                                    <th scope="col">Average Speed</th>
+                                    <th scope="col">Distance</th>
+                                    <th scope="col">Ball Possession</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>17</td>
+                                    <td>Phan Tấn Tài</td>
+                                    <td>32.4 km/h</td>
+                                    <td>9.31 km</td>
+                                    <td>
+                                        <div class="fa-dm-bar-cell">
+                                            <span class="fa-dm-bar-cell__text">75%</span>
+                                            <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
+                                                    style="width:75%"></span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>19</td>
+                                    <td>Nguyễn Quang Hải</td>
+                                    <td>31.2 km/h</td>
+                                    <td>8.87 km</td>
+                                    <td>
+                                        <div class="fa-dm-bar-cell">
+                                            <span class="fa-dm-bar-cell__text">46%</span>
+                                            <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
+                                                    style="width:46%"></span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>Nguyễn Văn Toàn</td>
+                                    <td>33.1 km/h</td>
+                                    <td>8.34 km</td>
+                                    <td>
+                                        <div class="fa-dm-bar-cell">
+                                            <span class="fa-dm-bar-cell__text">39%</span>
+                                            <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
+                                                    style="width:39%"></span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>18</td>
+                                    <td>Nguyễn Văn Tùng</td>
+                                    <td>30.5 km/h</td>
+                                    <td>6.94 km</td>
+                                    <td>
+                                        <div class="fa-dm-bar-cell">
+                                            <span class="fa-dm-bar-cell__text">27%</span>
+                                            <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
+                                                    style="width:27%"></span></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="/javascripts/main.js" defer></script>
+</body>
+
+</html>

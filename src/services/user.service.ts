@@ -3,7 +3,12 @@ import { prisma } from "config/client";
 
 
 const handleCreateUser = async (fullName: string, username: string, email: string, password: string) => {
-    // insert into database
+    const userRole = await prisma.role.findFirst({
+        where: { name: "USER" },
+    });
+    if (!userRole) {
+        throw new Error('Role "USER" not found. Seed roles before creating users.');
+    }
 
     await prisma.user.create({
         data: {
@@ -11,16 +16,19 @@ const handleCreateUser = async (fullName: string, username: string, email: strin
             username: username,
             email: email,
             password: password,
-            accountType: "",
-
-        }
-    })
-}
+            accountType: "USER",
+            role: { connect: { id: userRole.id } },
+        },
+    });
+};
 
 const getAllUsers = async () => {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+        include: { role: true },
+        orderBy: { id: "asc" },
+    });
     return users;
-}
+};
 
 const handleDeleteUser = async (id: string) => {
     await prisma.user.delete({
