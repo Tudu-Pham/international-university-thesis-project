@@ -44,11 +44,11 @@
                 <div class="fa-topbar__user">
                     <div class="fa-user-chip">
                         <span class="fa-user-chip__avatar" aria-hidden="true">
-                            <img src="/images/default_avatar.jpg" alt="">
+                            <img src="<%= currentUser && currentUser.avatar ? currentUser.avatar : '/images/default_avatar.jpg' %>" alt="">
                         </span>
-                        <span class="fa-user-chip__name">Nguyễn Văn A</span>
+                        <span class="fa-user-chip__name"><%= currentUser && currentUser.name ? currentUser.name : '' %></span>
                     </div>
-                    <a href="/signin" class="fa-btn-logout fa-btn-logout--link">Log out</a>
+                    <a href="/logout" class="fa-btn-logout fa-btn-logout--link">Log out</a>
                 </div>
             </header>
 

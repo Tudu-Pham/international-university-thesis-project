@@ -17,7 +17,7 @@ model User {
   id          Int     @id @default(autoincrement())
   name        String? @db.VarChar(255)
   username    String  @db.VarChar(255)
-  email       String? @db.VarChar(255)
+  email       String  @unique @db.VarChar(255)
   password    String  @db.VarChar(255)
   accountType String  @db.VarChar(50)
   avatar      String? @db.VarChar(255)
@@ -26,6 +26,17 @@ model User {
   videos      Video[]
 
   @@map("users")
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  email     String   @db.VarChar(255)
+  code      String   @db.VarChar(4)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@map("password_resets")
 }
 
 model Role {

@@ -532,15 +532,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     var updateForm = document.getElementById("fa-prof-update-form");
-    if (updateForm) {
-        updateForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            closeModal();
-            window.alert(
-                "Update request recorded. The server does not process this yet — UI demo only."
-            );
-            updateForm.reset();
-        });
+    if (document.body.getAttribute("data-fa-prof-open-modal") === "1") {
+        openModal();
     }
 
     var tbody = document.getElementById("fa-prof-clips-tbody");

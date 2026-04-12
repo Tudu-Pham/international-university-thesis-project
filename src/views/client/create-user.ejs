@@ -35,6 +35,10 @@
             <p class="signup-subheading">Join Football Analytics to unlock match insights and performance statistics.
             </p>
 
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="field-error mb-3" role="alert" style="max-width: 100%;"><%= error %></p>
+            <% } %>
+
             <form class="signup-form" action="/createUser" method="post">
                 <div class="signup-grid">
                     <div class="input-wrap">

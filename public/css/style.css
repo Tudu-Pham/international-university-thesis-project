@@ -2541,6 +2541,26 @@ html.home-root body.page-home {
     flex: 1;
 }
 
+.fa-prof-flash {
+    margin: 0 1.25rem 0.75rem;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.fa-prof-flash--success {
+    background: rgba(34, 197, 94, 0.18);
+    border: 1px solid rgba(74, 222, 128, 0.45);
+    color: #bbf7d0;
+}
+
+.fa-prof-flash--error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(248, 113, 113, 0.45);
+    color: #fecaca;
+}
+
 .fa-prof-layout {
     flex: 1;
     display: grid;

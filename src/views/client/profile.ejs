@@ -35,7 +35,7 @@
     </script>
 </head>
 
-<body class="page-fa-analyze page-fa-profile">
+<body class="page-fa-analyze page-fa-profile"<% if (typeof openProfileModal !== 'undefined' && openProfileModal) { %> data-fa-prof-open-modal="1"<% } %>>
     <div class="fa-analyze__bg" aria-hidden="true"></div>
     <div class="fa-analyze__veil" aria-hidden="true"></div>
 
@@ -79,21 +79,28 @@
                 <div class="fa-topbar__user">
                     <div class="fa-user-chip">
                         <span class="fa-user-chip__avatar" aria-hidden="true">
-                            <img src="/images/default_avatar.jpg" alt="">
+                            <img src="<%= currentUser && currentUser.avatar ? currentUser.avatar : '/images/default_avatar.jpg' %>" alt="">
                         </span>
-                        <span class="fa-user-chip__name">Alex Johnson</span>
+                        <span class="fa-user-chip__name"><%= currentUser && currentUser.name ? currentUser.name : '' %></span>
                     </div>
-                    <a href="/signin" class="fa-btn-logout fa-btn-logout--link">Log out</a>
+                    <a href="/logout" class="fa-btn-logout fa-btn-logout--link">Log out</a>
                 </div>
             </header>
+
+            <% if (typeof profileSuccess !== 'undefined' && profileSuccess) { %>
+                <div class="fa-prof-flash fa-prof-flash--success" role="status">Profile updated successfully.</div>
+            <% } %>
+            <% if (typeof profileErrorMessage !== 'undefined' && profileErrorMessage) { %>
+                <div class="fa-prof-flash fa-prof-flash--error" role="alert"><%= profileErrorMessage %></div>
+            <% } %>
 
             <div class="fa-prof-layout">
                 <aside class="fa-prof-aside" aria-label="Profile information">
                     <div class="fa-prof-avatar-ring">
-                        <img src="/images/default_avatar.jpg" alt="" class="fa-prof-avatar" width="120" height="120">
+                        <img src="<%= currentUser && currentUser.avatar ? currentUser.avatar : '/images/default_avatar.jpg' %>" alt="" class="fa-prof-avatar" width="120" height="120">
                     </div>
-                    <h1 class="fa-prof-name">Alex Johnson</h1>
-                    <p class="fa-prof-handle">@alexjohnson</p>
+                    <h1 class="fa-prof-name"><%= typeof displayName !== 'undefined' ? displayName : '' %></h1>
+                    <p class="fa-prof-handle">@<%= profileUser && profileUser.username ? profileUser.username : '' %></p>
 
                     <div class="fa-prof-info-card">
                         <span class="fa-prof-info-card__icon" aria-hidden="true">
@@ -105,7 +112,7 @@
                         </span>
                         <div class="fa-prof-info-card__body">
                             <span class="fa-prof-info-card__label">Username</span>
-                            <span class="fa-prof-info-card__value">alexjohnson</span>
+                            <span class="fa-prof-info-card__value"><%= profileUser && profileUser.username ? profileUser.username : '—' %></span>
                         </div>
                     </div>
                     <div class="fa-prof-info-card">
@@ -118,7 +125,7 @@
                         </span>
                         <div class="fa-prof-info-card__body">
                             <span class="fa-prof-info-card__label">Email</span>
-                            <span class="fa-prof-info-card__value">alex.johnson@example.com</span>
+                            <span class="fa-prof-info-card__value"><%= profileUser && profileUser.email ? profileUser.email : '—' %></span>
                         </div>
                     </div>
 
@@ -534,23 +541,24 @@
                 <button type="button" class="fa-prof-modal__close" data-fa-prof-close-modal
                     aria-label="Close">&times;</button>
             </div>
-            <form class="fa-prof-modal__form" id="fa-prof-update-form" novalidate>
+            <form class="fa-prof-modal__form" id="fa-prof-update-form" action="/profile" method="post" enctype="multipart/form-data" novalidate>
                 <p class="fa-prof-modal__hint">Only fill in the fields you want to change — all fields are optional.</p>
                 <div class="fa-field">
                     <label class="fa-field__label" for="avatarFile">Avatar</label>
                     <input class="form-control fa-field__input fa-prof-modal__file" type="file" id="avatarFile"
-                        name="avatar" accept=".png, .jpg, .jpeg">
+                        name="avatar" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
                     <img style="max-height: 250px; display: none;" alt="avatar preview" id="avatarPreview" />
                 </div>
                 <div class="fa-field">
                     <label class="fa-field__label" for="fa-prof-up-name">Name</label>
                     <input class="fa-field__input" type="text" id="fa-prof-up-name" name="name" placeholder="Full name"
-                        autocomplete="name">
+                        autocomplete="name" value="<%= profileUser && profileUser.name ? profileUser.name : '' %>">
                 </div>
                 <div class="fa-field">
                     <label class="fa-field__label" for="fa-prof-up-username">Username</label>
                     <input class="fa-field__input" type="text" id="fa-prof-up-username" name="username"
-                        placeholder="username" autocomplete="username">
+                        placeholder="username" autocomplete="username" required
+                        value="<%= profileUser && profileUser.username ? profileUser.username : '' %>">
                 </div>
                 <div class="fa-field">
                     <label class="fa-field__label" for="fa-prof-up-oldpw">Old password</label>

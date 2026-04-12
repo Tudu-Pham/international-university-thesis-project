@@ -1,24 +1,84 @@
 import express, { Express } from "express";
-import { DeleteUser, getAdminDashboard, getCreateUserPage, getDetailMatchPage, getHomePage, getMainPage, getMatchesPage, getProfile, getSignInPage, postCreateUserPage, ViewUser } from "controllers/user.controller";
+import multer from "multer";
+import session from "express-session";
+import { avatarUpload } from "config/upload";
+import { attachCurrentUser, requireAdmin, requireAuth } from "middleware/auth";
+import {
+    DeleteUser,
+    getAdminDashboard,
+    getCreateUserPage,
+    getDetailMatchPage,
+    getForgotPassword,
+    getForgotPasswordCode,
+    getHomePage,
+    getLogout,
+    getMainPage,
+    getMatchesPage,
+    getProfile,
+    getSignInPage,
+    postCreateUserPage,
+    postForgotPasswordCode,
+    postForgotPasswordEmail,
+    postSignIn,
+    postUpdateProfile,
+    ViewUser,
+} from "controllers/user.controller";
 
 const router = express.Router();
 
 const webRoutes = (app: Express) => {
-    router.get("/", getHomePage); //homepage
-    router.get("/createUser", getCreateUserPage); //create a new user, sign up page
-    router.post("/createUser", postCreateUserPage); //post data from create user
-    router.get("/signin", getSignInPage); //sign in page
-    router.get("/admin", getAdminDashboard); // admin dashboard page
-    router.get("/view-user/:id", ViewUser); //view each user page
-    router.get("/matches", getMatchesPage); //view matches page from admin page
-    router.post("/delete-user/:id", DeleteUser); //delete user from admin
-    router.get("/football-analytics", getMainPage);
-    router.get("/detail-match", getDetailMatchPage); //view detail analyze clip page
-    router.get("/profile", getProfile); //view user's profile, history
+    app.use(
+        session({
+            secret: process.env.SESSION_SECRET || "thesis-web-dev-secret-change-me",
+            resave: false,
+            saveUninitialized: false,
+            cookie: { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 },
+        }),
+    );
+    app.use(attachCurrentUser);
+
+    router.get("/", getHomePage);
+    router.get("/createUser", getCreateUserPage);
+    router.post("/createUser", postCreateUserPage);
+    router.get("/signin", getSignInPage);
+    router.post("/signin", postSignIn);
+    router.get("/logout", getLogout);
+
+    router.get("/forgot-password", getForgotPassword);
+    router.post("/forgot-password", postForgotPasswordEmail);
+    router.get("/forgot-password/code", getForgotPasswordCode);
+    router.post("/forgot-password/code", postForgotPasswordCode);
+
+    router.get("/admin", requireAdmin, getAdminDashboard);
+    router.get("/matches", requireAdmin, getMatchesPage);
+    router.post("/delete-user/:id", requireAdmin, DeleteUser);
+    router.get("/view-user/:id", requireAdmin, ViewUser);
+
+    router.get("/football-analytics", requireAuth, getMainPage);
+    router.get("/detail-match", requireAuth, getDetailMatchPage);
+    router.get("/profile", requireAuth, getProfile);
+    router.post(
+        "/profile",
+        requireAuth,
+        (req, res, next) => {
+            avatarUpload.single("avatar")(req, res, (err: unknown) => {
+                if (!err) {
+                    return next();
+                }
+                if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+                    return res.redirect("/profile?error=file_too_large");
+                }
+                const msg = err instanceof Error ? err.message : "";
+                if (msg === "INVALID_AVATAR_TYPE") {
+                    return res.redirect("/profile?error=invalid_file");
+                }
+                return res.redirect("/profile?error=upload_error");
+            });
+        },
+        postUpdateProfile,
+    );
 
     app.use("/", router);
-}
+};
 
-export default webRoutes
-
-
+export default webRoutes;

@@ -72,17 +72,18 @@
             <div class="admin-sidebar__footer">
                 <div class="admin-profile">
                     <div class="admin-profile__avatar" aria-hidden="true">
-                        <img src="/images/logo.png" alt="" />
+                        <img src="<%= currentUser && currentUser.avatar ? currentUser.avatar : '/images/default_avatar.jpg' %>"
+                            alt="" />
                     </div>
                     <div class="admin-profile__meta">
                         <div class="admin-profile__name">
-                            <%= user[0].username %>
+                            <%= currentUser && currentUser.name ? currentUser.name : '' %>
                         </div>
                         <div class="admin-profile__role">Admin</div>
                     </div>
                 </div>
 
-                <a class="admin-logout" href="/signin">
+                <a class="admin-logout" href="/logout">
                     <span class="admin-logout__icon" aria-hidden="true">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -107,7 +108,7 @@
                 <article class="admin-view-profile-card">
                     <div class="admin-view-profile__left">
                         <div class="admin-view-profile__avatar">
-                            <img src="/images/logo.png" alt="User avatar" />
+                            <img src="<%= user[0].avatar %>" alt="User avatar" />
                         </div>
                         <div class="admin-view-profile__meta">
                             <h1 class="admin-view-profile__name">
