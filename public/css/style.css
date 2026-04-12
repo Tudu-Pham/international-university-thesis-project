@@ -334,6 +334,71 @@
     opacity: 0.6;
 }
 
+/* Forgot password — segmented OTP */
+.otp-instruction {
+    text-align: center;
+    font-size: 0.9375rem;
+    color: #e2e8f0;
+    margin: 0 0 1.25rem;
+    line-height: 1.5;
+}
+
+.otp-instruction .otp-email {
+    font-weight: 600;
+    color: #fff;
+    word-break: break-all;
+}
+
+.otp-group {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: nowrap;
+}
+
+.otp-cell {
+    box-sizing: border-box;
+    width: 2.75rem;
+    height: 3rem;
+    border-radius: 6px;
+    border: 1px solid rgba(51, 65, 85, 0.95);
+    background: rgba(2, 6, 23, 0.45);
+    color: #f8fafc;
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    padding: 0;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.otp-cell::placeholder {
+    color: transparent;
+}
+
+.otp-cell:hover:not(:focus) {
+    border-color: rgba(71, 85, 105, 0.95);
+}
+
+.otp-cell:focus {
+    border-color: #e8c547;
+    box-shadow: 0 0 0 1px rgba(232, 197, 71, 0.45);
+}
+
+@media (min-width: 380px) {
+    .otp-cell {
+        width: 3rem;
+        height: 3.25rem;
+        font-size: 1.375rem;
+    }
+
+    .otp-group {
+        gap: 0.625rem;
+    }
+}
+
 /* Sign up */
 
 .page-signup {
