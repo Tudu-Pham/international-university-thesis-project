@@ -1,7 +1,7 @@
 import express, { Express } from "express";
 import multer from "multer";
 import session from "express-session";
-import { avatarUpload } from "config/upload";
+import { avatarUpload, clipUpload } from "config/upload";
 import { attachCurrentUser, requireAdmin, requireAuth } from "middleware/auth";
 import {
     DeleteUser,
@@ -21,6 +21,9 @@ import {
     postForgotPasswordEmail,
     postSignIn,
     postUpdateProfile,
+    postCreateAnalysisSession,
+    postAddPlayerToSession,
+    postAnalyzeClip,
     ViewUser,
 } from "controllers/user.controller";
 
@@ -55,6 +58,26 @@ const webRoutes = (app: Express) => {
     router.get("/view-user/:id", requireAdmin, ViewUser);
 
     router.get("/football-analytics", requireAuth, getMainPage);
+    router.post("/football-analytics/session", requireAuth, postCreateAnalysisSession);
+    router.post("/football-analytics/player", requireAuth, postAddPlayerToSession);
+    router.post(
+        "/football-analytics/analyze-clip",
+        requireAuth,
+        (req, res, next) => {
+            clipUpload.single("clip")(req, res, (err: unknown) => {
+                if (!err) return next();
+                if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+                    return res.redirect("/football-analytics?error=clip_too_large");
+                }
+                const msg = err instanceof Error ? err.message : "";
+                if (msg === "INVALID_CLIP_TYPE") {
+                    return res.redirect("/football-analytics?error=invalid_clip");
+                }
+                return res.redirect("/football-analytics?error=upload_error");
+            });
+        },
+        postAnalyzeClip,
+    );
     router.get("/detail-match", requireAuth, getDetailMatchPage);
     router.get("/profile", requireAuth, getProfile);
     router.post(

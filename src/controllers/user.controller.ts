@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
 import fs from "fs";
 import path from "path";
+import { prisma } from "config/client";
 import {
     authenticateUser,
     DEFAULT_AVATAR_PATH,
@@ -194,7 +195,145 @@ const ViewUser = async (req: Request, res: Response) => {
 };
 
 const getMainPage = (req: Request, res: Response) => {
-    return res.render("client/main");
+    const uid = req.session.userId;
+    if (uid == null) {
+        return res.redirect("/signin");
+    }
+    const qSessionId = typeof req.query.sessionId === "string" ? req.query.sessionId : "";
+    const sessionId = qSessionId && /^\d+$/.test(qSessionId) ? Number(qSessionId) : null;
+
+    return (async () => {
+        let session: { id: number; team_a: string; team_b: string } | null = null;
+        if (sessionId != null) {
+            session = await prisma.analysisSession.findFirst({
+                where: { id: sessionId, user_id: uid },
+                select: { id: true, team_a: true, team_b: true },
+            });
+        }
+
+        const players =
+            session?.id != null
+                ? await prisma.analysisSessionPlayer.findMany({
+                    where: { session_id: session.id },
+                    include: { player: true },
+                    orderBy: { id: "asc" },
+                })
+                : [];
+
+        const errorKey = typeof req.query.error === "string" ? req.query.error : "";
+        const errorMessages: Record<string, string> = {
+            clip_too_large: "Clip file is too large (maximum 500MB).",
+            invalid_clip: "Invalid clip. Use MP4 or AVI only.",
+            upload_error: "Upload failed. Please try again.",
+        };
+
+        return res.render("client/main", {
+            analysisSession: session,
+            teamAName: session?.team_a ?? "Team A",
+            teamBName: session?.team_b ?? "Team B",
+            recognizedPlayers: players.map((p) => p.player),
+            faErrorMessage: errorKey && errorMessages[errorKey] ? errorMessages[errorKey] : null,
+        });
+    })().catch((e) => {
+        throw e;
+    });
+};
+
+const postCreateAnalysisSession = async (req: Request, res: Response) => {
+    const uid = req.session.userId;
+    if (uid == null) {
+        return res.redirect("/signin");
+    }
+    const teamAName = String(req.body.teamAName ?? "").trim() || "Team A";
+    const teamBName = String(req.body.teamBName ?? "").trim() || "Team B";
+
+    const session = await prisma.analysisSession.create({
+        data: { user_id: uid, team_a: teamAName, team_b: teamBName },
+        select: { id: true },
+    });
+
+    return res.redirect(`/football-analytics?sessionId=${encodeURIComponent(String(session.id))}`);
+};
+
+const postAddPlayerToSession = async (req: Request, res: Response) => {
+    const uid = req.session.userId;
+    if (uid == null) {
+        return res.redirect("/signin");
+    }
+
+    const sessionIdRaw = String(req.body.sessionId ?? "").trim();
+    const sessionId = sessionIdRaw && /^\d+$/.test(sessionIdRaw) ? Number(sessionIdRaw) : null;
+    if (sessionId == null) {
+        return res.redirect("/football-analytics");
+    }
+
+    const session = await prisma.analysisSession.findFirst({
+        where: { id: sessionId, user_id: uid },
+        select: { id: true, team_a: true, team_b: true },
+    });
+    if (!session) {
+        return res.redirect("/football-analytics");
+    }
+
+    const shirtNumberRaw = String(req.body.shirtNumber ?? "").trim();
+    const shirtNumber = shirtNumberRaw === "" ? null : Number(shirtNumberRaw);
+    const playerName = String(req.body.playerName ?? "").trim() || null;
+    const position = String(req.body.playerPosition ?? "").trim() || null;
+    const teamChoice = String(req.body.team ?? "").trim();
+    const teamName = teamChoice === "B" ? session.team_b : session.team_a;
+
+    const createdPlayer = await prisma.player.create({
+        data: {
+            shirt_number: Number.isFinite(shirtNumber as number) ? (shirtNumber as number) : null,
+            player_name: playerName,
+            position: position,
+            team: teamName,
+        },
+        select: { id: true },
+    });
+
+    await prisma.analysisSessionPlayer.create({
+        data: { session_id: session.id, player_id: createdPlayer.id },
+    });
+
+    return res.redirect(`/football-analytics?sessionId=${encodeURIComponent(String(session.id))}`);
+};
+
+const postAnalyzeClip = async (req: Request, res: Response) => {
+    const uid = req.session.userId;
+    if (uid == null) {
+        return res.redirect("/signin");
+    }
+
+    const sessionIdRaw = String(req.body.sessionId ?? "").trim();
+    const sessionId = sessionIdRaw && /^\d+$/.test(sessionIdRaw) ? Number(sessionIdRaw) : null;
+    if (sessionId == null) {
+        return res.redirect("/football-analytics");
+    }
+
+    const session = await prisma.analysisSession.findFirst({
+        where: { id: sessionId, user_id: uid },
+        select: { id: true },
+    });
+    if (!session) {
+        return res.redirect("/football-analytics");
+    }
+
+    const filename = req.file?.filename ? String(req.file.filename) : null;
+    if (!filename) {
+        return res.redirect(`/football-analytics?sessionId=${encodeURIComponent(String(session.id))}`);
+    }
+
+    await prisma.video.create({
+        data: {
+            user_id: uid,
+            input_video: filename,
+            status: "UPLOADED",
+            analysis_session_id: session.id,
+        },
+    });
+
+    return res.redirect(`/football-analytics?sessionId=${encodeURIComponent(String(session.id))}`);
 };
 
 const getProfile = async (req: Request, res: Response) => {
@@ -301,4 +440,7 @@ export {
     postCreateUserPage,
     DeleteUser,
     ViewUser,
+    postCreateAnalysisSession,
+    postAddPlayerToSession,
+    postAnalyzeClip,
 };

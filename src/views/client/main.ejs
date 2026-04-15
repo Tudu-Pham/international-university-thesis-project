@@ -69,34 +69,17 @@
                 <div class="fa-top-panels">
                     <section class="fa-panel fa-panel--upload" aria-labelledby="fa-upload-heading">
                         <h2 id="fa-upload-heading" class="visually-hidden">Upload clip and teams</h2>
-                        <form id="fa-team-form" class="fa-upload-block" novalidate>
-                            <div class="fa-dropzone" data-fa-dropzone>
-                                <input type="file" id="fa-clip-input" class="fa-dropzone__input" name="clip"
-                                    accept="video/mp4,video/x-msvideo,.mp4,.avi" aria-label="Upload match clip">
-                                <label for="fa-clip-input" class="fa-dropzone__label">
-                                    <span class="fa-dropzone__icon" aria-hidden="true">
-                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="1.5">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                            <polyline points="17 8 12 3 7 8" />
-                                            <line x1="12" y1="3" x2="12" y2="15" />
-                                        </svg>
-                                    </span>
-                                    <span class="fa-dropzone__text">Drop clip or click to upload (Video MP4, AVI, max
-                                        500MB)</span>
-                                    <span class="fa-btn-choose">Choose clip</span>
-                                </label>
-                            </div>
+                        <form id="fa-team-form" class="fa-upload-block" action="/football-analytics/session" method="post" novalidate>
                             <div class="fa-panel__teams">
                                 <div class="fa-field">
                                     <label class="fa-field__label" for="fa-team-a-name">Team A</label>
                                     <input class="fa-field__input" type="text" id="fa-team-a-name" name="teamAName"
-                                        placeholder="Team A" autocomplete="organization">
+                                        value="<%= typeof teamAName === 'string' ? teamAName : 'Team A' %>" placeholder="Team A" autocomplete="organization">
                                 </div>
                                 <div class="fa-field">
                                     <label class="fa-field__label" for="fa-team-b-name">Team B</label>
                                     <input class="fa-field__input" type="text" id="fa-team-b-name" name="teamBName"
-                                        placeholder="Team B" autocomplete="organization">
+                                        value="<%= typeof teamBName === 'string' ? teamBName : 'Team B' %>" placeholder="Team B" autocomplete="organization">
                                 </div>
                             </div>
                             <button type="submit" class="fa-btn-primary fa-btn-primary--block">Submit</button>
@@ -105,7 +88,8 @@
 
                     <section class="fa-panel fa-panel--analyze" aria-labelledby="fa-analyze-heading">
                         <h2 id="fa-analyze-heading" class="fa-panel__title">Analyze Player</h2>
-                        <form id="fa-analyze-player-form" class="fa-analyze-form" novalidate>
+                        <form id="fa-analyze-player-form" class="fa-analyze-form" action="/football-analytics/player" method="post" novalidate>
+                            <input type="hidden" name="sessionId" value="<%= analysisSession && analysisSession.id ? analysisSession.id : '' %>">
                             <div class="fa-analyze-form__grid">
                                 <div class="fa-field">
                                     <label class="fa-field__label" for="fa-shirt-number">Shirt number</label>
@@ -127,15 +111,19 @@
                                 <div class="fa-field">
                                     <label class="fa-field__label" for="fa-team-select">Team</label>
                                     <select class="fa-field__select" id="fa-team-select" name="team">
-                                        <option value="team-a">Team A</option>
-                                        <option value="team-b">Team B</option>
+                                        <option value="A"><%= typeof teamAName === 'string' ? teamAName : 'Team A' %></option>
+                                        <option value="B"><%= typeof teamBName === 'string' ? teamBName : 'Team B' %></option>
                                     </select>
                                 </div>
                             </div>
-                            <button type="button" class="fa-btn-primary fa-btn-primary--block">Analyze player</button>
+                            <button type="submit" class="fa-btn-primary fa-btn-primary--block">Analyze player</button>
                         </form>
                     </section>
                 </div>
+
+                <form id="fa-analyze-clip-form" action="/football-analytics/analyze-clip" method="post" enctype="multipart/form-data" novalidate>
+                    <input type="hidden" name="sessionId" value="<%= analysisSession && analysisSession.id ? analysisSession.id : '' %>">
+                </form>
 
                 <section class="fa-players" aria-labelledby="fa-players-heading">
                     <div class="fa-players__head">
@@ -151,6 +139,28 @@
                         </div>
                     </div>
 
+                    <div class="fa-dropzone" data-fa-dropzone>
+                        <input type="file" id="fa-clip-input" class="fa-dropzone__input" name="clip"
+                            form="fa-analyze-clip-form" accept="video/mp4,video/x-msvideo,.mp4,.avi" aria-label="Upload match clip">
+                        <label for="fa-clip-input" class="fa-dropzone__label">
+                            <span class="fa-dropzone__icon" aria-hidden="true">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                            </span>
+                            <span class="fa-dropzone__text">Drop clip or click to upload (Video MP4, AVI, max
+                                500MB)</span>
+                            <span class="fa-btn-choose">Choose clip</span>
+                        </label>
+                    </div>
+
+                    <% if (faErrorMessage) { %>
+                        <p class="field-error"><%= faErrorMessage %></p>
+                    <% } %>
+
                     <div class="fa-table-wrap">
                         <table class="fa-table">
                             <thead>
@@ -163,64 +173,42 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>19</td>
-                                    <td>James Ward</td>
-                                    <td>Midfielder</td>
-                                    <td>Team A</td>
-                                    <td>
-                                        <div class="fa-table__actions">
-                                            <button type="button" class="fa-action fa-action--confirm"
-                                                aria-label="Confirm upgrade">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="3">
-                                                    <polyline points="20 6 9 17 4 12" />
-                                                </svg>
-                                                Upgrade
-                                            </button>
-                                            <button type="button" class="fa-action fa-action--delete"
-                                                aria-label="Delete player">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="3">
-                                                    <polyline points="20 6 9 17 4 12" />
-                                                </svg>
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Marcus Lee</td>
-                                    <td>Defender</td>
-                                    <td>Team B</td>
-                                    <td>
-                                        <div class="fa-table__actions">
-                                            <button type="button" class="fa-action fa-action--confirm"
-                                                aria-label="Confirm upgrade">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="3">
-                                                    <polyline points="20 6 9 17 4 12" />
-                                                </svg>
-                                                Upgrade
-                                            </button>
-                                            <button type="button" class="fa-action fa-action--delete"
-                                                aria-label="Delete player">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="3">
-                                                    <polyline points="20 6 9 17 4 12" />
-                                                </svg>
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <% if (recognizedPlayers && recognizedPlayers.length) { %>
+                                    <% recognizedPlayers.forEach(function(p) { %>
+                                        <tr>
+                                            <td><%= p.shirt_number != null ? p.shirt_number : "—" %></td>
+                                            <td><%= p.player_name != null ? p.player_name : "—" %></td>
+                                            <td><%= p.position != null ? p.position : "—" %></td>
+                                            <td><%= p.team != null ? p.team : "—" %></td>
+                                            <td>
+                                                <div class="fa-table__actions">
+                                                    <button type="button" class="fa-action fa-action--confirm" aria-label="Confirm upgrade">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                                            <polyline points="20 6 9 17 4 12" />
+                                                        </svg>
+                                                        Upgrade
+                                                    </button>
+                                                    <button type="button" class="fa-action fa-action--delete" aria-label="Delete player">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                                            <polyline points="20 6 9 17 4 12" />
+                                                        </svg>
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" style="color: rgba(148,163,184,0.95); font-weight: 600;">No recognized players yet.</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
 
                     <div class="fa-players__footer">
-                        <button type="button" class="fa-btn-primary fa-btn-primary--wide">Analyze clip</button>
+                        <button type="submit" form="fa-analyze-clip-form" class="fa-btn-primary fa-btn-primary--wide">Analyze clip</button>
                     </div>
                 </section>
             </main>

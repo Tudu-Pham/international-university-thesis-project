@@ -24,6 +24,7 @@ model User {
   role_id     Int
   role        Role    @relation(fields: [role_id], references: [id])
   videos      Video[]
+  analysisSessions AnalysisSession[]
 
   @@map("users")
 }
@@ -55,8 +56,26 @@ model Video {
   videoPlayers VideoPlayer[]
   user_id      Int
   user         User          @relation(fields: [user_id], references: [id])
+  analysis_session_id Int?
+  analysisSession AnalysisSession? @relation(fields: [analysis_session_id], references: [id])
 
   @@map("videos")
+}
+
+model AnalysisSession {
+  id        Int      @id @default(autoincrement())
+  team_a    String   @db.VarChar(255)
+  team_b    String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+
+  user_id   Int
+  user      User     @relation(fields: [user_id], references: [id])
+
+  players   AnalysisSessionPlayer[]
+  videos    Video[]
+
+  @@index([user_id])
+  @@map("analysis_sessions")
 }
 
 model Player {
@@ -66,8 +85,22 @@ model Player {
   team         String?       @db.VarChar(255)
   position     String?       @db.VarChar(255)
   videoPlayers VideoPlayer[]
+  analysisSessions AnalysisSessionPlayer[]
 
   @@map("players")
+}
+
+model AnalysisSessionPlayer {
+  id         Int            @id @default(autoincrement())
+  session_id Int
+  session    AnalysisSession @relation(fields: [session_id], references: [id])
+  player_id  Int
+  player     Player         @relation(fields: [player_id], references: [id])
+
+  @@unique([session_id, player_id])
+  @@index([session_id])
+  @@index([player_id])
+  @@map("analysis_session_players")
 }
 
 model VideoPlayer {

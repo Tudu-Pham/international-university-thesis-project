@@ -395,36 +395,36 @@ document.addEventListener("DOMContentLoaded", function () {
     var teamAInput = document.getElementById("fa-team-a-name");
     var teamBInput = document.getElementById("fa-team-b-name");
 
-    if (teamForm && teamSelect && teamAInput && teamBInput) {
-        teamForm.addEventListener("submit", function (e) {
-            e.preventDefault();
+    function syncTeamSelectFromInputs() {
+        if (!teamSelect || !teamAInput || !teamBInput) return;
 
-            var nameA = (teamAInput.value || "").trim();
-            var nameB = (teamBInput.value || "").trim();
+        var nameA = (teamAInput.value || "").trim() || "Team A";
+        var nameB = (teamBInput.value || "").trim() || "Team B";
+        var previousValue = teamSelect.value;
 
-            if (!nameA) nameA = "Team A";
-            if (!nameB) nameB = "Team B";
+        teamSelect.innerHTML = "";
 
-            var previousValue = teamSelect.value;
+        var optA = document.createElement("option");
+        optA.value = "A";
+        optA.textContent = nameA;
+        teamSelect.appendChild(optA);
 
-            teamSelect.innerHTML = "";
+        var optB = document.createElement("option");
+        optB.value = "B";
+        optB.textContent = nameB;
+        teamSelect.appendChild(optB);
 
-            var optA = document.createElement("option");
-            optA.value = "team-a";
-            optA.textContent = nameA;
-            teamSelect.appendChild(optA);
+        if (previousValue === "A" || previousValue === "B") {
+            teamSelect.value = previousValue;
+        } else {
+            teamSelect.selectedIndex = 0;
+        }
+    }
 
-            var optB = document.createElement("option");
-            optB.value = "team-b";
-            optB.textContent = nameB;
-            teamSelect.appendChild(optB);
-
-            if (previousValue === "team-a" || previousValue === "team-b") {
-                teamSelect.value = previousValue;
-            } else {
-                teamSelect.selectedIndex = 0;
-            }
-        });
+    if (teamSelect && teamAInput && teamBInput) {
+        syncTeamSelectFromInputs();
+        teamAInput.addEventListener("input", syncTeamSelectFromInputs);
+        teamBInput.addEventListener("input", syncTeamSelectFromInputs);
     }
 
     var dropzone = document.querySelector("[data-fa-dropzone]");
