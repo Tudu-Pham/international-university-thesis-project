@@ -4,15 +4,33 @@ import multer from "multer";
 import type { Request } from "express";
 
 const avatarsDir = path.join(process.cwd(), "public", "images", "avatars");
-const videosDir = path.join(process.cwd(), "src", "videos");
+const inputVideosDir = path.join(process.cwd(), "public", "videos", "input_videos");
+const outputVideosDir = path.join(process.cwd(), "public", "videos", "output_videos");
+const recognitionListsDir = path.join(process.cwd(), "public", "recognition-lists");
 
 if (!fs.existsSync(avatarsDir)) {
     fs.mkdirSync(avatarsDir, { recursive: true });
 }
 
-if (!fs.existsSync(videosDir)) {
-    fs.mkdirSync(videosDir, { recursive: true });
+if (!fs.existsSync(inputVideosDir)) {
+    fs.mkdirSync(inputVideosDir, { recursive: true });
 }
+
+if (!fs.existsSync(outputVideosDir)) {
+    fs.mkdirSync(outputVideosDir, { recursive: true });
+}
+
+if (!fs.existsSync(recognitionListsDir)) {
+    fs.mkdirSync(recognitionListsDir, { recursive: true });
+}
+
+/** Disk paths + public URL prefixes for analyze pipeline */
+export const videoStorage = {
+    inputDir: inputVideosDir,
+    outputDir: outputVideosDir,
+    publicInputPrefix: "/videos/input_videos",
+    publicOutputPrefix: "/videos/output_videos",
+} as const;
 
 export const avatarUpload = multer({
     storage: multer.diskStorage({
@@ -38,7 +56,7 @@ export const avatarUpload = multer({
 
 export const clipUpload = multer({
     storage: multer.diskStorage({
-        destination: (_req, _file, cb) => cb(null, videosDir),
+        destination: (_req, _file, cb) => cb(null, inputVideosDir),
         filename: (req: Request, file, cb) => {
             const uid = req.session?.userId ?? "0";
             const ext = path.extname(file.originalname).toLowerCase();
@@ -46,7 +64,7 @@ export const clipUpload = multer({
             cb(null, `clip-${uid}-${Date.now()}${safeExt}`);
         },
     }),
-    limits: { fileSize: 500 * 1024 * 1024 },
+    limits: { fileSize: 1000 * 1024 * 1024 },
     fileFilter: (_req, file, cb) => {
         const mimeOk = /^video\/(mp4|x-msvideo)$/i.test(file.mimetype);
         const nameOk = /\.(mp4|avi)$/i.test(file.originalname);

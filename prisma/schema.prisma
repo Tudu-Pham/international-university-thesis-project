@@ -51,6 +51,7 @@ model Role {
 model Video {
   id           Int           @id @default(autoincrement())
   input_video  String?       @db.VarChar(255)
+  recognition_list_path String? @db.VarChar(512)
   output_video String?       @db.VarChar(255)
   status       String?       @db.VarChar(255)
   videoPlayers VideoPlayer[]

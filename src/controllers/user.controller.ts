@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import fs from "fs";
 import path from "path";
 import { prisma } from "config/client";
+import { videoStorage } from "config/upload";
 import {
     authenticateUser,
     DEFAULT_AVATAR_PATH,
@@ -222,7 +223,7 @@ const getMainPage = (req: Request, res: Response) => {
 
         const errorKey = typeof req.query.error === "string" ? req.query.error : "";
         const errorMessages: Record<string, string> = {
-            clip_too_large: "Clip file is too large (maximum 500MB).",
+            clip_too_large: "Clip file is too large (maximum 1000MB).",
             invalid_clip: "Invalid clip. Use MP4 or AVI only.",
             upload_error: "Upload failed. Please try again.",
         };
@@ -324,16 +325,50 @@ const postAnalyzeClip = async (req: Request, res: Response) => {
         return res.redirect(`/football-analytics?sessionId=${encodeURIComponent(String(session.id))}`);
     }
 
-    await prisma.video.create({
-        data: {
-            user_id: uid,
-            input_video: filename,
-            status: "UPLOADED",
-            analysis_session_id: session.id,
-        },
+    const links = await prisma.analysisSessionPlayer.findMany({
+        where: { session_id: session.id },
+        include: { player: true },
+        orderBy: { id: "asc" },
     });
 
-    return res.redirect(`/football-analytics?sessionId=${encodeURIComponent(String(session.id))}`);
+    const lines = [
+        "shirt_number\tplayer_name\tposition\tteam",
+        ...links.map((l) => {
+            const p = l.player;
+            const sn = p.shirt_number != null ? String(p.shirt_number) : "";
+            const name = p.player_name ?? "";
+            const pos = p.position ?? "";
+            const team = p.team ?? "";
+            return `${sn}\t${name}\t${pos}\t${team}`;
+        }),
+    ];
+    const txtBody = lines.join("\n");
+    const txtFilename = `players-${uid}-${session.id}-${Date.now()}.txt`;
+    const txtAbs = path.join(process.cwd(), "public", "recognition-lists", txtFilename);
+    fs.mkdirSync(path.dirname(txtAbs), { recursive: true });
+    fs.writeFileSync(txtAbs, txtBody, "utf8");
+    const recognitionPublicPath = `/recognition-lists/${txtFilename}`;
+
+    await prisma.$transaction(async (tx) => {
+        await tx.video.create({
+            data: {
+                user_id: uid,
+                input_video: `${videoStorage.publicInputPrefix}/${filename}`,
+                recognition_list_path: recognitionPublicPath,
+                status: "UPLOADED",
+                analysis_session_id: null,
+            },
+        });
+
+        const playerIds = links.map((l) => l.player_id);
+        await tx.analysisSessionPlayer.deleteMany({ where: { session_id: session.id } });
+        if (playerIds.length) {
+            await tx.player.deleteMany({ where: { id: { in: playerIds } } });
+        }
+        await tx.analysisSession.delete({ where: { id: session.id } });
+    });
+
+    return res.redirect("/football-analytics");
 };
 
 const getProfile = async (req: Request, res: Response) => {

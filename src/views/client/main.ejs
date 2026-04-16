@@ -139,28 +139,6 @@
                         </div>
                     </div>
 
-                    <div class="fa-dropzone" data-fa-dropzone>
-                        <input type="file" id="fa-clip-input" class="fa-dropzone__input" name="clip"
-                            form="fa-analyze-clip-form" accept="video/mp4,video/x-msvideo,.mp4,.avi" aria-label="Upload match clip">
-                        <label for="fa-clip-input" class="fa-dropzone__label">
-                            <span class="fa-dropzone__icon" aria-hidden="true">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="1.5">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                    <polyline points="17 8 12 3 7 8" />
-                                    <line x1="12" y1="3" x2="12" y2="15" />
-                                </svg>
-                            </span>
-                            <span class="fa-dropzone__text">Drop clip or click to upload (Video MP4, AVI, max
-                                500MB)</span>
-                            <span class="fa-btn-choose">Choose clip</span>
-                        </label>
-                    </div>
-
-                    <% if (faErrorMessage) { %>
-                        <p class="field-error"><%= faErrorMessage %></p>
-                    <% } %>
-
                     <div class="fa-table-wrap">
                         <table class="fa-table">
                             <thead>
@@ -207,8 +185,35 @@
                         </table>
                     </div>
 
+                    <% if (faErrorMessage) { %>
+                        <p class="field-error fa-players__flash"><%= faErrorMessage %></p>
+                    <% } %>
+
+                    <div class="fa-dropzone fa-dropzone--below-table" data-fa-dropzone>
+                        <input type="file" id="fa-clip-input" class="fa-dropzone__input" name="clip"
+                            form="fa-analyze-clip-form" accept="video/mp4,video/x-msvideo,.mp4,.avi" aria-label="Upload match clip">
+                        <label for="fa-clip-input" class="fa-dropzone__label">
+                            <span class="fa-dropzone__icon" aria-hidden="true">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                            </span>
+                            <span class="fa-dropzone__text">Drop clip or click to upload (Video MP4, AVI, max
+                                1000MB)</span>
+                            <span class="fa-btn-choose">Choose clip</span>
+                        </label>
+                    </div>
+
+                    <div class="fa-clip-preview" id="fa-clip-preview" hidden>
+                        <p class="fa-clip-preview__label">Selected clip preview</p>
+                        <video id="fa-clip-preview-video" class="fa-clip-preview__video" controls playsinline preload="metadata"></video>
+                    </div>
+
                     <div class="fa-players__footer">
-                        <button type="submit" form="fa-analyze-clip-form" class="fa-btn-primary fa-btn-primary--wide">Analyze clip</button>
+                        <button type="submit" form="fa-analyze-clip-form" class="fa-btn-primary fa-btn-primary--wide">Analyze video</button>
                     </div>
                 </section>
             </main>

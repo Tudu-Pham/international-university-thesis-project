@@ -2566,6 +2566,36 @@ html.home-root body.page-home {
     padding-top: 1.35rem;
 }
 
+.fa-dropzone--below-table {
+    margin-top: 1rem;
+}
+
+.fa-players__flash {
+    margin: 0.75rem 0 0;
+}
+
+.fa-clip-preview {
+    margin-top: 1rem;
+}
+
+.fa-clip-preview__label {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.fa-clip-preview__video {
+    display: block;
+    width: 100%;
+    max-height: min(56vh, 420px);
+    border-radius: 10px;
+    border: 1px solid rgba(51, 65, 85, 0.65);
+    background: #020617;
+}
+
 @media (max-width: 960px) {
     .fa-top-panels {
         grid-template-columns: 1fr;

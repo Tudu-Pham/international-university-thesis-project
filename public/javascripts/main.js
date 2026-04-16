@@ -427,6 +427,44 @@ document.addEventListener("DOMContentLoaded", function () {
         teamBInput.addEventListener("input", syncTeamSelectFromInputs);
     }
 
+    var clipInput = document.getElementById("fa-clip-input");
+    var clipPreview = document.getElementById("fa-clip-preview");
+    var clipPreviewVideo = document.getElementById("fa-clip-preview-video");
+    var clipObjectUrl = null;
+    var clipForm = document.getElementById("fa-analyze-clip-form");
+    var maxClipBytes = 1000 * 1024 * 1024;
+
+    function updateClipPreview() {
+        if (!clipPreview || !clipPreviewVideo || !clipInput) return;
+        if (clipObjectUrl) {
+            URL.revokeObjectURL(clipObjectUrl);
+            clipObjectUrl = null;
+        }
+        var file = clipInput.files && clipInput.files[0];
+        if (!file) {
+            clipPreview.hidden = true;
+            clipPreviewVideo.removeAttribute("src");
+            return;
+        }
+        clipObjectUrl = URL.createObjectURL(file);
+        clipPreviewVideo.src = clipObjectUrl;
+        clipPreview.hidden = false;
+    }
+
+    if (clipInput) {
+        clipInput.addEventListener("change", updateClipPreview);
+    }
+
+    if (clipForm && clipInput) {
+        clipForm.addEventListener("submit", function (e) {
+            var file = clipInput.files && clipInput.files[0];
+            if (file && file.size > maxClipBytes) {
+                e.preventDefault();
+                window.alert("Clip is too large (maximum 1000 MB).");
+            }
+        });
+    }
+
     var dropzone = document.querySelector("[data-fa-dropzone]");
     if (dropzone) {
         ["dragenter", "dragover"].forEach(function (ev) {
@@ -436,12 +474,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 dropzone.classList.add("fa-dropzone--drag");
             });
         });
-        ["dragleave", "drop"].forEach(function (ev) {
-            dropzone.addEventListener(ev, function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                dropzone.classList.remove("fa-dropzone--drag");
-            });
+        dropzone.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove("fa-dropzone--drag");
+        });
+        dropzone.addEventListener("drop", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove("fa-dropzone--drag");
+            var dt = e.dataTransfer;
+            if (!dt || !dt.files || !dt.files.length || !clipInput) return;
+            try {
+                clipInput.files = dt.files;
+                clipInput.dispatchEvent(new Event("change", { bubbles: true }));
+            } catch (err) {
+                // Some browsers block assigning input.files
+            }
         });
     }
 
