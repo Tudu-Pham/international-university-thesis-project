@@ -555,9 +555,9 @@ const postAnalyzeClip = async (req: Request, res: Response) => {
     fs.writeFileSync(csvAbs, csvBody, "utf8");
     const recognitionPublicPath = `/recognition-lists/${csvFilename}`;
 
-    await prisma.$transaction(async (tx) => {
+    const video = await prisma.$transaction(async (tx) => {
         const inputPublicPath = `${videoStorage.publicInputPrefix}/${filename}`;
-        await tx.video.create({
+        const video = await tx.video.create({
             data: {
                 user_id: uid,
                 input_video: inputPublicPath,
@@ -574,9 +574,46 @@ const postAnalyzeClip = async (req: Request, res: Response) => {
         // keep players table cleanup minimal for now: remove player rows tied to this session
         if (playerIds.length) await tx.player.deleteMany({ where: { id: { in: playerIds } } });
         await tx.analysisSession.delete({ where: { id: session.id } });
+    
+        return video;
+    });
+
+    const fullVideoPath = req.file?.path;       // 👈 full path video
+    const fullCsvPath = csvAbs;                 // 👈 bạn đã có
+
+    await fetch("http://localhost:5000/analyze", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            video_path: fullVideoPath,
+            csv_path: fullCsvPath,
+            callback_url: "http://localhost:3000/api/ai-callback",
+            video_id: video.id,
+        }),
     });
 
     return res.redirect("/football-analytics");
+};
+
+const handleAICallback = async (req: Request, res: Response) => {
+    console.log("AI callback received:", req.body);
+
+    const { job_id, video_path, video_id} = req.body;
+    console.log("Job ID:", job_id);
+    console.log("Video path:", video_path);
+    console.log("Video ID:", video_id);
+    
+    await prisma.video.update({
+        where: { id: video_id },
+        data: {
+            output_video: video_path, // 👈 cập nhật ở đây
+            status: "DONE",
+        },
+    });
+
+    return res.status(200).json({ status: "ok" });
 };
 
 const getProfile = async (req: Request, res: Response) => {
@@ -897,6 +934,7 @@ export {
     postCreateAnalysisSession,
     postAddPlayerToSession,
     postAnalyzeClip,
+    handleAICallback,
     deleteVideo,
     downloadVideo,
     adminDeleteVideo,

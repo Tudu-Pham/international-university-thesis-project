@@ -55,6 +55,7 @@ model Video {
   output_video String?       @db.VarChar(255)
   status       String?       @db.VarChar(255)
   videoPlayers VideoPlayer[]
+  createdAt               DateTime @default(now())
   user_id      Int
   user         User          @relation(fields: [user_id], references: [id])
   analysis_session_id Int?

@@ -29,6 +29,7 @@ import {
     downloadVideo,
     adminDeleteVideo,
     adminDownloadVideo,
+    handleAICallback,
 } from "controllers/user.controller";
 
 const router = express.Router();
@@ -108,6 +109,8 @@ const webRoutes = (app: Express) => {
         },
         postUpdateProfile,
     );
+
+    router.post("/api/ai-callback", handleAICallback);
 
     app.use("/", router);
 };
