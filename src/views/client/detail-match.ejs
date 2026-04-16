@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
     <script type="application/json"
-        id="fa-dm-match-data"><%- JSON.stringify({ teamAPossession: typeof possessionTeamA === 'number' ? possessionTeamA : 65 }) %></script>
+        id="fa-dm-match-data"><%- JSON.stringify({ teamAPossession: typeof possessionTeamA === 'number' ? possessionTeamA : 0 }) %></script>
 </head>
 
 <body class="page-fa-analyze page-fa-detail-match">
@@ -57,7 +57,7 @@
                     <section class="fa-dm-video-section" aria-label="Match video">
                         <div class="fa-dm-video-card">
                             <video class="fa-dm-video" controls playsinline webkit-playsinline preload="metadata"
-                                poster="/images/theme.png" src="/videos/dbdc7605-37d4-4318-a1aa-24627e968602_h264.mp4">
+                                poster="/images/theme.png" src="<%= typeof matchVideoSrc === 'string' ? matchVideoSrc : '' %>">
                                 Your browser does not support the video tag.
                             </video>
                         </div>
@@ -76,14 +76,14 @@
                                 <span class="fa-dm-pie-legend__item">
                                     <span class="fa-dm-pie-legend__dot fa-dm-pie-legend__dot--a"
                                         aria-hidden="true"></span>
-                                    <span class="fa-dm-pie-legend__label">Team A</span>
-                                    <span class="fa-dm-pie-legend__val" data-fa-dm-legend-a>65%</span>
+                                    <span class="fa-dm-pie-legend__label"><%= typeof teamAName === 'string' ? teamAName : 'Team A' %></span>
+                                    <span class="fa-dm-pie-legend__val" data-fa-dm-legend-a>0%</span>
                                 </span>
                                 <span class="fa-dm-pie-legend__item">
                                     <span class="fa-dm-pie-legend__dot fa-dm-pie-legend__dot--b"
                                         aria-hidden="true"></span>
-                                    <span class="fa-dm-pie-legend__label">Team B</span>
-                                    <span class="fa-dm-pie-legend__val" data-fa-dm-legend-b>35%</span>
+                                    <span class="fa-dm-pie-legend__label"><%= typeof teamBName === 'string' ? teamBName : 'Team B' %></span>
+                                    <span class="fa-dm-pie-legend__val" data-fa-dm-legend-b>0%</span>
                                 </span>
                             </div>
                         </div>
@@ -113,62 +113,31 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>17</td>
-                                    <td><span class="fa-dm-table__team fa-dm-table__team--a">Team A</span></td>
-                                    <td>Phan Tấn Tài</td>
-                                    <td>32.4 km/h</td>
-                                    <td>9.31 km</td>
-                                    <td>
-                                        <div class="fa-dm-bar-cell">
-                                            <span class="fa-dm-bar-cell__text">75%</span>
-                                            <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
-                                                    style="width:75%"></span></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>19</td>
-                                    <td><span class="fa-dm-table__team fa-dm-table__team--a">Team A</span></td>
-                                    <td>Nguyễn Quang Hải</td>
-                                    <td>31.2 km/h</td>
-                                    <td>8.87 km</td>
-                                    <td>
-                                        <div class="fa-dm-bar-cell">
-                                            <span class="fa-dm-bar-cell__text">46%</span>
-                                            <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
-                                                    style="width:46%"></span></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>9</td>
-                                    <td><span class="fa-dm-table__team fa-dm-table__team--b">Team B</span></td>
-                                    <td>Nguyễn Văn Toàn</td>
-                                    <td>33.1 km/h</td>
-                                    <td>8.34 km</td>
-                                    <td>
-                                        <div class="fa-dm-bar-cell">
-                                            <span class="fa-dm-bar-cell__text">39%</span>
-                                            <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
-                                                    style="width:39%"></span></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>18</td>
-                                    <td><span class="fa-dm-table__team fa-dm-table__team--b">Team B</span></td>
-                                    <td>Nguyễn Văn Tùng</td>
-                                    <td>30.5 km/h</td>
-                                    <td>6.94 km</td>
-                                    <td>
-                                        <div class="fa-dm-bar-cell">
-                                            <span class="fa-dm-bar-cell__text">27%</span>
-                                            <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
-                                                    style="width:27%"></span></span>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <% if (typeof players !== 'undefined' && players && players.length) { %>
+                                    <% players.forEach(function(p) { %>
+                                        <tr>
+                                            <td><%= p.shirt_number != null ? p.shirt_number : "—" %></td>
+                                            <td>
+                                                <% var isA = typeof teamAName === 'string' && p.team === teamAName; %>
+                                                <span class="fa-dm-table__team <%= isA ? 'fa-dm-table__team--a' : 'fa-dm-table__team--b' %>"><%= p.team != null ? p.team : '—' %></span>
+                                            </td>
+                                            <td><%= p.player_name != null ? p.player_name : "—" %></td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>
+                                                <div class="fa-dm-bar-cell">
+                                                    <span class="fa-dm-bar-cell__text">0%</span>
+                                                    <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
+                                                            style="width:0%"></span></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="admin-table-empty">No player statistics yet.</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>

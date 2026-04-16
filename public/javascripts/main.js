@@ -588,6 +588,27 @@ document.addEventListener("DOMContentLoaded", function () {
     var tbody = document.getElementById("fa-prof-clips-tbody");
     var sortInput = document.getElementById("fa-prof-filter-sort");
     var profSearch = document.getElementById("fa-prof-clips-search");
+    var pageInfo = document.getElementById("fa-prof-page-info");
+    var pageNav = document.getElementById("fa-prof-page-nav");
+    var rowsSelect = document.getElementById("fa-prof-rows-select");
+
+    var state = {
+        keyword: "",
+        sort: sortInput ? sortInput.value : "newest",
+        page: 1,
+        perPage: rowsSelect ? parseInt(rowsSelect.value || "10", 10) : 10
+    };
+
+    function getAllRows() {
+        if (!tbody) return [];
+        return Array.prototype.slice.call(tbody.querySelectorAll("tr"));
+    }
+
+    function rowMatches(row, keyword) {
+        if (!keyword) return true;
+        var text = row.textContent ? row.textContent.toLowerCase() : "";
+        return text.includes(keyword);
+    }
 
     function renumberRows() {
         if (!tbody) return;
@@ -605,8 +626,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function sortClips() {
         if (!tbody || !sortInput) return;
-        var rows = Array.prototype.slice.call(tbody.querySelectorAll("tr"));
-        var dir = sortInput.value === "oldest" ? 1 : -1;
+        var rows = getAllRows();
+        var dir = state.sort === "oldest" ? 1 : -1;
         rows.sort(function (a, b) {
             var ta = parseInt(a.getAttribute("data-fa-prof-date") || "0", 10);
             var tb = parseInt(b.getAttribute("data-fa-prof-date") || "0", 10);
@@ -615,12 +636,12 @@ document.addEventListener("DOMContentLoaded", function () {
         rows.forEach(function (row) {
             tbody.appendChild(row);
         });
-        renumberRows();
     }
 
     function setFilterValue(value) {
         if (!sortInput || !filterCurrent || !filterList) return;
         sortInput.value = value;
+        state.sort = value;
         var labels = { newest: "Newest to oldest", oldest: "Oldest to newest" };
         filterCurrent.textContent = labels[value] || value;
         Array.prototype.forEach.call(filterList.querySelectorAll('[role="option"]'), function (opt) {
@@ -629,7 +650,8 @@ document.addEventListener("DOMContentLoaded", function () {
             opt.setAttribute("aria-selected", sel ? "true" : "false");
             opt.classList.toggle("fa-prof-filter__option--active", sel);
         });
-        sortClips();
+        state.page = 1;
+        render();
     }
 
     if (filterTrigger && filterList && filterRoot) {
@@ -652,16 +674,148 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function clamp(n, min, max) {
+        return Math.min(max, Math.max(min, n));
+    }
+
+    function formatRange(start, end, total) {
+        if (!total) return "Showing 0–0 of 0 results";
+        return "Showing " + start + "–" + end + " of " + total + " results";
+    }
+
+    function buildPageButton(label, page, isActive, isDisabled, ariaLabel) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "fa-prof-page-btn" + (isActive ? " fa-prof-page-btn--active" : "");
+        if (isActive) btn.setAttribute("aria-current", "page");
+        if (ariaLabel) btn.setAttribute("aria-label", ariaLabel);
+        btn.disabled = !!isDisabled;
+        btn.textContent = label;
+        btn.addEventListener("click", function () {
+            if (btn.disabled) return;
+            state.page = page;
+            render();
+        });
+        return btn;
+    }
+
+    function renderPagination(total, pageCount) {
+        if (!pageInfo || !pageNav) return;
+
+        var perPage = state.perPage;
+        var page = clamp(state.page, 1, Math.max(1, pageCount));
+        state.page = page;
+
+        var start = total ? (page - 1) * perPage + 1 : 0;
+        var end = total ? Math.min(total, page * perPage) : 0;
+        pageInfo.textContent = formatRange(start, end, total);
+
+        pageNav.innerHTML = "";
+        pageNav.appendChild(buildPageButton("‹", page - 1, false, page <= 1, "Previous page"));
+
+        // show up to 7 page buttons
+        var maxBtns = 7;
+        var half = Math.floor(maxBtns / 2);
+        var from = Math.max(1, page - half);
+        var to = Math.min(pageCount, from + maxBtns - 1);
+        from = Math.max(1, to - maxBtns + 1);
+
+        for (var p = from; p <= to; p++) {
+            pageNav.appendChild(buildPageButton(String(p), p, p === page, false, null));
+        }
+
+        pageNav.appendChild(buildPageButton("›", page + 1, false, page >= pageCount, "Next page"));
+    }
+
+    function applyVisibility(filteredRows) {
+        var perPage = state.perPage;
+        var page = state.page;
+        var total = filteredRows.length;
+        var pageCount = Math.max(1, Math.ceil(total / perPage));
+        state.page = clamp(page, 1, pageCount);
+
+        // hide all rows first
+        var all = getAllRows();
+        all.forEach(function (r) {
+            r.style.display = "none";
+        });
+
+        var startIdx = (state.page - 1) * perPage;
+        var endIdx = Math.min(total, startIdx + perPage);
+        for (var i = startIdx; i < endIdx; i++) {
+            filteredRows[i].style.display = "";
+        }
+
+        renderPagination(total, pageCount);
+        renumberRows();
+    }
+
+    function render() {
+        if (!tbody) return;
+        sortClips();
+
+        var keyword = (state.keyword || "").trim().toLowerCase();
+        var rows = getAllRows();
+        var filtered = rows.filter(function (row) {
+            return rowMatches(row, keyword);
+        });
+        applyVisibility(filtered);
+    }
+
     if (profSearch && tbody) {
         profSearch.addEventListener("input", function () {
-            var keyword = (profSearch.value || "").trim().toLowerCase();
-            Array.prototype.forEach.call(tbody.querySelectorAll("tr"), function (row) {
-                var text = row.textContent ? row.textContent.toLowerCase() : "";
-                row.style.display = !keyword || text.includes(keyword) ? "" : "none";
-            });
-            renumberRows();
+            state.keyword = (profSearch.value || "").trim().toLowerCase();
+            state.page = 1;
+            render();
         });
     }
+
+    if (rowsSelect) {
+        rowsSelect.addEventListener("change", function () {
+            var v = parseInt(rowsSelect.value || "10", 10);
+            state.perPage = isNaN(v) ? 10 : v;
+            state.page = 1;
+            render();
+        });
+    }
+
+    // Delete clip
+    function handleDeleteClick(e) {
+        var btn = e.target && e.target.closest ? e.target.closest("[data-fa-prof-delete]") : null;
+        if (!btn) return;
+        var id = btn.getAttribute("data-video-id");
+        if (!id) return;
+        var ok = window.confirm("Delete this clip? This will remove it permanently.");
+        if (!ok) return;
+
+        btn.disabled = true;
+        fetch("/videos/" + encodeURIComponent(id), {
+            method: "DELETE",
+            headers: { "Accept": "application/json" }
+        })
+            .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { status: r.status, body: j }; }); })
+            .then(function (resp) {
+                if (!resp || resp.status >= 400 || !resp.body || resp.body.ok !== true) {
+                    throw new Error("Delete failed");
+                }
+                var row = btn.closest("tr");
+                if (row && row.parentNode) row.parentNode.removeChild(row);
+                render();
+            })
+            .catch(function () {
+                window.alert("Delete failed. Please try again.");
+            })
+            .finally(function () {
+                btn.disabled = false;
+            });
+    }
+
+    if (tbody) {
+        tbody.addEventListener("click", handleDeleteClick);
+    }
+
+    // initial render
+    render();
 })();
 
 // Match detail — ball possession pie (data from #fa-dm-match-data or API later)

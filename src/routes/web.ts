@@ -25,6 +25,8 @@ import {
     postAddPlayerToSession,
     postAnalyzeClip,
     ViewUser,
+    deleteVideo,
+    downloadVideo,
 } from "controllers/user.controller";
 
 const router = express.Router();
@@ -80,6 +82,8 @@ const webRoutes = (app: Express) => {
     );
     router.get("/detail-match", requireAuth, getDetailMatchPage);
     router.get("/profile", requireAuth, getProfile);
+    router.get("/videos/:id/download", requireAuth, downloadVideo);
+    router.delete("/videos/:id", requireAuth, deleteVideo);
     router.post(
         "/profile",
         requireAuth,
