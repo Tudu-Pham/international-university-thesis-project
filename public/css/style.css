@@ -1077,7 +1077,7 @@
     border-radius: 10px;
     font-weight: 900;
     font-size: 0.85rem;
-    transition: transform 0.16s ease, filter 0.2s ease, background 0.2s ease;
+    transition: none;
     color: #052012;
 }
 
@@ -1099,8 +1099,8 @@
 }
 
 .admin-action:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.05);
+    transform: none;
+    filter: none;
 }
 
 .admin-pagination {
@@ -1110,6 +1110,19 @@
     gap: 14px;
     padding: 16px 16px 18px;
     padding-bottom: 40px;
+}
+
+.admin-page-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.admin-page-info {
+    color: rgba(226, 232, 240, 0.86);
+    font-weight: 800;
+    font-size: 0.9rem;
 }
 
 .admin-page-btn {
@@ -1127,6 +1140,12 @@
     opacity: 0.55;
     cursor: not-allowed;
     transform: none;
+}
+
+.admin-page-btn.is-active {
+    background: rgba(34, 197, 94, 0.18);
+    border-color: rgba(34, 197, 94, 0.35);
+    color: rgba(226, 232, 240, 0.95);
 }
 
 .admin-page-btn:not([disabled]):hover {

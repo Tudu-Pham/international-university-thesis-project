@@ -27,6 +27,8 @@ import {
     ViewUser,
     deleteVideo,
     downloadVideo,
+    adminDeleteVideo,
+    adminDownloadVideo,
 } from "controllers/user.controller";
 
 const router = express.Router();
@@ -56,6 +58,8 @@ const webRoutes = (app: Express) => {
 
     router.get("/admin", requireAdmin, getAdminDashboard);
     router.get("/matches", requireAdmin, getMatchesPage);
+    router.get("/admin/videos/:id/download", requireAdmin, adminDownloadVideo);
+    router.delete("/admin/videos/:id", requireAdmin, adminDeleteVideo);
     router.post("/delete-user/:id", requireAdmin, DeleteUser);
     router.get("/view-user/:id", requireAdmin, ViewUser);
 

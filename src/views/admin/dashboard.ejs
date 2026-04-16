@@ -137,7 +137,7 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="admin-users-tbody" data-admin-paginate>
                                 <% users.forEach(function(user){%>
                                     <tr>
                                         <td>
@@ -170,10 +170,9 @@
                         </table>
                     </div>
                 </div>
-                <div class="admin-pagination" aria-label="Pagination">
-                    <button type="button" class="admin-page-btn" disabled>Previous</button>
-                    <span class="admin-page-num is-active">1</span>
-                    <button type="button" class="admin-page-btn" disabled aria-label="Next">Next</button>
+                <div class="admin-pagination" aria-label="Pagination" data-admin-pagination>
+                    <span class="admin-page-info" data-admin-page-info>Showing 0–0 of 0</span>
+                    <div class="admin-page-nav" data-admin-page-nav></div>
                 </div>
             </section>
         </main>

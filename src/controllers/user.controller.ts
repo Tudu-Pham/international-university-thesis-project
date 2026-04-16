@@ -42,7 +42,47 @@ const getCreateUserPage = (req: Request, res: Response) => {
 };
 
 const getMatchesPage = (req: Request, res: Response) => {
-    return res.render("admin/matches");
+    return (async () => {
+        const videos = await prisma.video.findMany({
+            orderBy: { createdAt: "desc" },
+            select: {
+                id: true,
+                input_video: true,
+                output_video: true,
+                recognition_list_path: true,
+                createdAt: true,
+                user: { select: { id: true, username: true } },
+            },
+        });
+
+        const rows = videos.map((v) => {
+            let teamA: string | null = null;
+            let teamB: string | null = null;
+            if (v.recognition_list_path) {
+                const abs = path.join(process.cwd(), "public", v.recognition_list_path.replace(/^\//, ""));
+                try {
+                    const parsed = readRecognitionFile(abs);
+                    teamA = parsed.teamA;
+                    teamB = parsed.teamB;
+                } catch {
+                    // ignore
+                }
+            }
+            return {
+                id: v.id,
+                username: v.user?.username ?? "—",
+                input_video: v.input_video,
+                output_video: v.output_video,
+                team_a: teamA,
+                team_b: teamB,
+                created_at: v.createdAt,
+            };
+        });
+
+        return res.render("admin/matches", { videos: rows });
+    })().catch((e) => {
+        throw e;
+    });
 };
 
 const postCreateUserPage = async (req: Request, res: Response) => {
@@ -189,9 +229,49 @@ const DeleteUser = async (req: Request, res: Response) => {
 const ViewUser = async (req: Request, res: Response) => {
     const id = req.params.id as string;
     const user = await getUserByID(id);
+    const uid = id && /^\d+$/.test(id) ? Number(id) : null;
+    const videos =
+        uid == null
+            ? []
+            : await prisma.video.findMany({
+                where: { user_id: uid },
+                orderBy: { createdAt: "desc" },
+                select: {
+                    id: true,
+                    input_video: true,
+                    output_video: true,
+                    recognition_list_path: true,
+                    createdAt: true,
+                },
+            });
+
+    const rows = videos.map((v) => {
+        let teamA: string | null = null;
+        let teamB: string | null = null;
+        if (v.recognition_list_path) {
+            const abs = path.join(process.cwd(), "public", v.recognition_list_path.replace(/^\//, ""));
+            try {
+                const parsed = readRecognitionFile(abs);
+                teamA = parsed.teamA;
+                teamB = parsed.teamB;
+            } catch {
+                // ignore
+            }
+        }
+        return {
+            id: v.id,
+            input_video: v.input_video,
+            output_video: v.output_video,
+            team_a: teamA,
+            team_b: teamB,
+            created_at: v.createdAt,
+        };
+    });
+
     return res.render("admin/view", {
-        id: id,
-        user: user,
+        id,
+        user,
+        videos: rows,
     });
 };
 
@@ -748,6 +828,53 @@ const downloadVideo = async (req: Request, res: Response) => {
     return res.download(abs, filename);
 };
 
+const adminDeleteVideo = async (req: Request, res: Response) => {
+    const idRaw = String(req.params.id ?? "").trim();
+    const id = idRaw && /^\d+$/.test(idRaw) ? Number(idRaw) : null;
+    if (id == null) return res.status(400).json({ ok: false, error: "INVALID_ID" });
+
+    const video = await prisma.video.findFirst({
+        where: { id },
+        select: { id: true, input_video: true, output_video: true, recognition_list_path: true },
+    });
+    if (!video) return res.status(404).json({ ok: false, error: "NOT_FOUND" });
+
+    await prisma.video.delete({ where: { id: video.id } });
+
+    const absInput = safePublicAbsPathFromPublicUrl(video.input_video);
+    const absOutput = safePublicAbsPathFromPublicUrl(video.output_video);
+    const absRec = safePublicAbsPathFromPublicUrl(video.recognition_list_path);
+    const toDelete = [absInput, absOutput, absRec].filter((x): x is string => Boolean(x));
+    toDelete.forEach((abs) => {
+        try {
+            fs.unlinkSync(abs);
+        } catch {
+            // ignore
+        }
+    });
+
+    return res.json({ ok: true });
+};
+
+const adminDownloadVideo = async (req: Request, res: Response) => {
+    const idRaw = String(req.params.id ?? "").trim();
+    const id = idRaw && /^\d+$/.test(idRaw) ? Number(idRaw) : null;
+    if (id == null) return res.status(400).send("Invalid video id");
+
+    const video = await prisma.video.findFirst({
+        where: { id },
+        select: { id: true, input_video: true, output_video: true },
+    });
+    if (!video) return res.status(404).send("Video not found");
+
+    const publicUrl = video.output_video || video.input_video;
+    const abs = safePublicAbsPathFromPublicUrl(publicUrl);
+    if (!abs) return res.status(404).send("File not available");
+
+    const filename = path.basename(abs);
+    return res.download(abs, filename);
+};
+
 export {
     getHomePage,
     getCreateUserPage,
@@ -772,4 +899,6 @@ export {
     postAnalyzeClip,
     deleteVideo,
     downloadVideo,
+    adminDeleteVideo,
+    adminDownloadVideo,
 };

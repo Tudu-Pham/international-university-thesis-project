@@ -118,55 +118,44 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Usero</td>
-                                    <td>tudu</td>
-                                    <td>Manchester United vs</td>
-                                    <td>match1.mp4</td>
-                                    <td>match1_output.mp4</td>
-                                    <td>
-                                        <button type="button"
-                                            class="admin-action admin-action--delete admin-matches-delete">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>na</td>
-                                    <td>na</td>
-                                    <td>Arsenal</td>
-                                    <td>liverpool_vs_arsenal.mp4</td>
-                                    <td>liverpool_output.mp4</td>
-                                    <td>
-                                        <button type="button"
-                                            class="admin-action admin-action--delete admin-matches-delete">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>bin</td>
-                                    <td>bin</td>
-                                    <td>Brazil</td>
-                                    <td>france_vs_brazil.mp4</td>
-                                    <td>france_output.mp4</td>
-                                    <td>
-                                        <button type="button"
-                                            class="admin-action admin-action--delete admin-matches-delete">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
+                            <tbody id="admin-matches-tbody" data-admin-paginate>
+                                <%
+                                function clipNameFromPath(p) {
+                                    if (!p) return "—";
+                                    var s = String(p);
+                                    s = s.split("?")[0].split("#")[0];
+                                    s = s.replace(/\\/g, "/");
+                                    var parts = s.split("/");
+                                    return parts[parts.length - 1] || "—";
+                                }
+                                %>
+
+                                <% if (typeof videos !== 'undefined' && videos && videos.length) { %>
+                                    <% videos.forEach(function(v) { %>
+                                        <tr data-admin-date="<%= v.created_at ? new Date(v.created_at).getTime() : 0 %>">
+                                            <td><%= v.id %></td>
+                                            <td><%= v.username ? v.username : '—' %></td>
+                                            <td><%= v.team_a ? v.team_a : '—' %></td>
+                                            <td><%= v.team_b ? v.team_b : '—' %></td>
+                                            <td><%= clipNameFromPath(v.input_video) %></td>
+                                            <td><%= clipNameFromPath(v.output_video || v.input_video) %></td>
+                                            <td class="admin-table-actions">
+                                                <a class="admin-action admin-action--view simple-link" href="/detail-match?videoId=<%= v.id %>">View</a>
+                                                <a class="admin-action admin-action--view simple-link" href="/admin/videos/<%= v.id %>/download">Download</a>
+                                                <button type="button" class="admin-action admin-action--delete" data-admin-video-delete data-video-id="<%= v.id %>">Delete</button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7" class="admin-table-empty">No uploaded matches yet.</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
-                        <div class="admin-pagination" aria-label="Pagination">
-                            <button type="button" class="admin-page-btn" disabled>Previous</button>
-                            <span class="admin-page-num is-active">1</span>
-                            <button type="button" class="admin-page-btn" disabled aria-label="Next">Next</button>
+                        <div class="admin-pagination" aria-label="Pagination" data-admin-pagination>
+                            <span class="admin-page-info" data-admin-page-info>Showing 0–0 of 0</span>
+                            <div class="admin-page-nav" data-admin-page-nav></div>
                         </div>
 
                     </div>

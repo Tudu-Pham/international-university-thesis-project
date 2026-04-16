@@ -278,57 +278,17 @@
     });
 })();
 
-//search user engine
-document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.querySelector(".admin-search__input");
-    const rows = document.querySelectorAll(".admin-table tbody tr");
-
-    if (!searchInput) return;
-
-    searchInput.addEventListener("input", function () {
-        const keyword = this.value.trim().toLowerCase();
-
-        rows.forEach(row => {
-            const id = row.children[0]?.innerText.toLowerCase() || "";
-            const name = row.children[1]?.innerText.toLowerCase() || "";
-            const username = row.children[2]?.innerText.toLowerCase() || "";
-            const email = row.children[3]?.innerText.toLowerCase() || "";
-
-            const match =
-                id.includes(keyword) ||
-                name.includes(keyword) ||
-                username.includes(keyword) ||
-                email.includes(keyword);
-
-            row.style.display = match ? "" : "none";
-        });
-    });
-});
+// legacy admin search (replaced by admin pagination module below)
 
 // View page interactions
 document.addEventListener("DOMContentLoaded", function () {
     const editBtn = document.querySelector(".admin-view-profile__edit");
-    const deleteButtons = document.querySelectorAll(".admin-view-delete");
 
     if (editBtn) {
         editBtn.addEventListener("click", function () {
             window.alert("Edit profile action is not implemented yet.");
         });
     }
-
-    if (!deleteButtons.length) return;
-
-    deleteButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            const row = btn.closest("tr");
-            if (!row) return;
-
-            const ok = window.confirm("Delete this uploaded match?");
-            if (!ok) return;
-
-            row.remove();
-        });
-    });
 });
 
 // Restrict Users nav on Dashboard/Matches
@@ -458,6 +418,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (clipForm && clipInput) {
         clipForm.addEventListener("submit", function (e) {
             var file = clipInput.files && clipInput.files[0];
+            if (!file) {
+                e.preventDefault();
+                window.alert("Please choose a clip to analyze.");
+                return;
+            }
             if (file && file.size > maxClipBytes) {
                 e.preventDefault();
                 window.alert("Clip is too large (maximum 1000 MB).");
@@ -507,6 +472,169 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
+})();
+
+// Admin pages — table pagination + delete video
+(function () {
+    if (!document.body.classList.contains("admin-page")) return;
+
+    function clamp(n, min, max) {
+        return Math.min(max, Math.max(min, n));
+    }
+
+    function buildBtn(label, disabled, onClick, ariaLabel) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "admin-page-btn";
+        btn.disabled = !!disabled;
+        if (ariaLabel) btn.setAttribute("aria-label", ariaLabel);
+        btn.textContent = label;
+        btn.addEventListener("click", onClick);
+        return btn;
+    }
+
+    function paginateTable(tbody, paginationRoot) {
+        if (!tbody || !paginationRoot) return;
+        var info = paginationRoot.querySelector("[data-admin-page-info]");
+        var nav = paginationRoot.querySelector("[data-admin-page-nav]");
+        if (!info || !nav) return;
+
+        var state = { page: 1, perPage: 10, keyword: "" };
+
+        function getRows() {
+            return Array.prototype.slice.call(tbody.querySelectorAll("tr"));
+        }
+
+        function visibleRows(rows) {
+            // ignore empty placeholders
+            return rows
+                .filter(function (r) {
+                    return !(r.querySelector && r.querySelector(".admin-table-empty"));
+                })
+                .filter(function (r) {
+                    var kw = (state.keyword || "").trim().toLowerCase();
+                    if (!kw) return true;
+                    var t = r.textContent ? r.textContent.toLowerCase() : "";
+                    return t.includes(kw);
+                });
+        }
+
+        function render() {
+            var all = getRows();
+            var rows = visibleRows(all);
+            var total = rows.length;
+            var pageCount = Math.max(1, Math.ceil(total / state.perPage));
+            state.page = clamp(state.page, 1, pageCount);
+
+            // hide all
+            all.forEach(function (r) { r.style.display = "none"; });
+
+            if (total === 0) {
+                // show placeholder row(s)
+                all.forEach(function (r) { r.style.display = ""; });
+                info.textContent = "Showing 0–0 of 0";
+                nav.innerHTML = "";
+                return;
+            }
+
+            var startIdx = (state.page - 1) * state.perPage;
+            var endIdx = Math.min(total, startIdx + state.perPage);
+            for (var i = startIdx; i < endIdx; i++) {
+                rows[i].style.display = "";
+            }
+
+            info.textContent = "Showing " + (startIdx + 1) + "–" + endIdx + " of " + total;
+
+            nav.innerHTML = "";
+            nav.appendChild(
+                buildBtn("Previous", state.page <= 1, function () {
+                    state.page -= 1;
+                    render();
+                }, "Previous page")
+            );
+
+            // show up to 7 pages
+            var maxBtns = 7;
+            var half = Math.floor(maxBtns / 2);
+            var from = Math.max(1, state.page - half);
+            var to = Math.min(pageCount, from + maxBtns - 1);
+            from = Math.max(1, to - maxBtns + 1);
+            for (var p = from; p <= to; p++) {
+                (function (page) {
+                    var b = buildBtn(String(page), false, function () {
+                        state.page = page;
+                        render();
+                    }, null);
+                    if (page === state.page) b.classList.add("is-active");
+                    nav.appendChild(b);
+                })(p);
+            }
+
+            nav.appendChild(
+                buildBtn("Next", state.page >= pageCount, function () {
+                    state.page += 1;
+                    render();
+                }, "Next page")
+            );
+        }
+
+        // expose rerender when rows change
+        tbody.__adminPaginateRender = render;
+        render();
+
+        // wire search input within same page (dashboard)
+        var searchInput = document.querySelector(".admin-search__input");
+        if (searchInput) {
+            searchInput.addEventListener("input", function () {
+                state.keyword = (searchInput.value || "").trim().toLowerCase();
+                state.page = 1;
+                render();
+            });
+        }
+    }
+
+    // init pagination for each table
+    var tbodies = document.querySelectorAll("tbody[data-admin-paginate]");
+    Array.prototype.forEach.call(tbodies, function (tbody) {
+        var card = tbody.closest(".admin-table-wrap") || document;
+        var paginationRoot = card.querySelector("[data-admin-pagination]");
+        if (paginationRoot) paginateTable(tbody, paginationRoot);
+    });
+
+    // delete video on matches/view pages
+    function onDeleteClick(e) {
+        var btn = e.target && e.target.closest ? e.target.closest("[data-admin-video-delete]") : null;
+        if (!btn) return;
+        var id = btn.getAttribute("data-video-id");
+        if (!id) return;
+        var ok = window.confirm("Delete this video? This will remove it permanently.");
+        if (!ok) return;
+
+        btn.disabled = true;
+        fetch("/admin/videos/" + encodeURIComponent(id), {
+            method: "DELETE",
+            headers: { "Accept": "application/json" }
+        })
+            .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { status: r.status, body: j }; }); })
+            .then(function (resp) {
+                if (!resp || resp.status >= 400 || !resp.body || resp.body.ok !== true) {
+                    throw new Error("Delete failed");
+                }
+                var row = btn.closest("tr");
+                if (row && row.parentNode) row.parentNode.removeChild(row);
+                // rerender pagination for this table
+                var tbody = row ? row.closest("tbody[data-admin-paginate]") : null;
+                if (tbody && typeof tbody.__adminPaginateRender === "function") tbody.__adminPaginateRender();
+            })
+            .catch(function () {
+                window.alert("Delete failed. Please try again.");
+            })
+            .finally(function () {
+                btn.disabled = false;
+            });
+    }
+
+    document.addEventListener("click", onDeleteClick);
 })();
 
 // Profile page — update modal, clips search & date sort

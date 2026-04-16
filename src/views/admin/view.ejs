@@ -108,17 +108,17 @@
                 <article class="admin-view-profile-card">
                     <div class="admin-view-profile__left">
                         <div class="admin-view-profile__avatar">
-                            <img src="<%= user[0].avatar %>" alt="User avatar" />
+                            <img src="<%= user && user[0] && user[0].avatar ? user[0].avatar : '/images/default_avatar.jpg' %>" alt="User avatar" />
                         </div>
                         <div class="admin-view-profile__meta">
                             <h1 class="admin-view-profile__name">
-                                <%= user[0].name %>
+                                <%= user && user[0] && user[0].name ? user[0].name : '—' %>
                             </h1>
                             <p class="admin-view-profile__line"><span>User:</span>
-                                <%= user[0].username %>
+                                <%= user && user[0] && user[0].username ? user[0].username : '—' %>
                             </p>
                             <p class="admin-view-profile__line"><span>Email:</span>
-                                <%= user[0].email %>
+                                <%= user && user[0] && user[0].email ? user[0].email : '—' %>
                             </p>
                             <p class="admin-view-profile__line"><span>Member</span>since June 2026</p>
                         </div>
@@ -153,45 +153,37 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Manchester United</td>
-                                    <td>Chelsea</td>
-                                    <td>match1.mp4</td>
-                                    <td>match1_output.mp4</td>
-                                    <td>
-                                        <button type="button"
-                                            class="admin-action admin-action--delete admin-view-delete">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Liverpool</td>
-                                    <td>Arsenal</td>
-                                    <td>liverpool_vs_arsenal.mp4</td>
-                                    <td>liverpool_output.mp4</td>
-                                    <td>
-                                        <button type="button"
-                                            class="admin-action admin-action--delete admin-view-delete">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>France</td>
-                                    <td>Brazil</td>
-                                    <td>france_vs_brazil.mp4</td>
-                                    <td>france_output.mp4</td>
-                                    <td>
-                                        <button type="button"
-                                            class="admin-action admin-action--delete admin-view-delete">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
+                                <%
+                                function clipNameFromPath(p) {
+                                    if (!p) return "—";
+                                    var s = String(p);
+                                    s = s.split("?")[0].split("#")[0];
+                                    s = s.replace(/\\/g, "/");
+                                    var parts = s.split("/");
+                                    return parts[parts.length - 1] || "—";
+                                }
+                                %>
+
+                                <% if (typeof videos !== 'undefined' && videos && videos.length) { %>
+                                    <% videos.forEach(function(v) { %>
+                                        <tr data-admin-date="<%= v.created_at ? new Date(v.created_at).getTime() : 0 %>">
+                                            <td><%= v.id %></td>
+                                            <td><%= v.team_a ? v.team_a : '—' %></td>
+                                            <td><%= v.team_b ? v.team_b : '—' %></td>
+                                            <td><%= clipNameFromPath(v.input_video) %></td>
+                                            <td><%= clipNameFromPath(v.output_video || v.input_video) %></td>
+                                            <td class="admin-table-actions">
+                                                <a class="admin-action admin-action--view simple-link" href="/detail-match?videoId=<%= v.id %>">View</a>
+                                                <a class="admin-action admin-action--view simple-link" href="/admin/videos/<%= v.id %>/download">Download</a>
+                                                <button type="button" class="admin-action admin-action--delete" data-admin-video-delete data-video-id="<%= v.id %>">Delete</button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="admin-table-empty">No uploaded matches yet.</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
