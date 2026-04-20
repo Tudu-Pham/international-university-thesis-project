@@ -375,7 +375,7 @@ function readRecognitionCsv(absPath: string) {
     const lines = raw.split(/\r?\n/).filter((l) => l.trim() !== "");
     let teamA = "Team A";
     let teamB = "Team B";
-    const players: Array<{ shirt_number: number | null; player_name: string | null; position: string | null; team: string | null }> = [];
+    const players: Array<{ shirt_number: number | null; player_name: string | null; position: string | null; team: string | null; avg_speed: string | null; possession_percent: string | null }> = [];
 
     // expected:
     // 0: team_a,team_b
@@ -411,6 +411,8 @@ function readRecognitionCsv(absPath: string) {
                 player_name: (cols[1] ?? "").trim() || null,
                 position: (cols[2] ?? "").trim() || null,
                 team: (cols[3] ?? "").trim() || null,
+                avg_speed: (cols[4] ?? "").trim() || null,
+                possession_percent: (cols[5] ?? "").trim() || null,
             });
         }
     }
@@ -425,7 +427,7 @@ function readRecognitionFile(absPath: string) {
     // backward-compat: old TSV txt format (no team meta)
     const raw = fs.readFileSync(absPath, "utf8");
     const lines = raw.split(/\r?\n/).filter((l) => l.trim() !== "");
-    const players: Array<{ shirt_number: number | null; player_name: string | null; position: string | null; team: string | null }> = [];
+    const players: Array<{ shirt_number: number | null; player_name: string | null; position: string | null; team: string | null; avg_speed: string | null; possession_percent: string | null }> = [];
     let startIdx = 0;
     if (lines.length && /^shirt_number\s+/i.test(lines[0])) startIdx = 1;
     for (let i = startIdx; i < lines.length; i++) {
@@ -437,6 +439,8 @@ function readRecognitionFile(absPath: string) {
             player_name: (cols[1] ?? "").trim() || null,
             position: (cols[2] ?? "").trim() || null,
             team: (cols[3] ?? "").trim() || null,
+            avg_speed: (cols[4] ?? "").trim() || null,
+            possession_percent: (cols[5] ?? "").trim() || null,
         });
     }
     return { teamA: "Team A", teamB: "Team B", players };
@@ -600,7 +604,7 @@ const postAnalyzeClip = async (req: Request, res: Response) => {
 const handleAICallback = async (req: Request, res: Response) => {
     console.log("AI callback received:", req.body);
 
-    const { job_id, video_path, video_id} = req.body;
+    const { job_id, video_path, video_id, possession_left} = req.body;
     console.log("Job ID:", job_id);
     console.log("Video path:", video_path);
     console.log("Video ID:", video_id);
@@ -610,6 +614,7 @@ const handleAICallback = async (req: Request, res: Response) => {
         data: {
             output_video: video_path, // 👈 cập nhật ở đây
             status: "DONE",
+            possessionTeamA: Number(possession_left)
         },
     });
 
@@ -771,6 +776,7 @@ const getDetailMatchPage = async (req: Request, res: Response) => {
             input_video: true,
             output_video: true,
             recognition_list_path: true,
+            possessionTeamA: true
         },
     });
     if (!video) {
@@ -778,6 +784,7 @@ const getDetailMatchPage = async (req: Request, res: Response) => {
     }
 
     const matchVideoSrc = video.output_video || video.input_video || "";
+    const possessionTeamA = video.possessionTeamA;
     let teamAName = "Team A";
     let teamBName = "Team B";
     let players: Array<{ shirt_number: number | null; player_name: string | null; position: string | null; team: string | null }> = [];
@@ -794,7 +801,7 @@ const getDetailMatchPage = async (req: Request, res: Response) => {
     }
 
     return res.render("client/detail-match", {
-        possessionTeamA: 0,
+        possessionTeamA,
         matchVideoSrc,
         teamAName,
         teamBName,

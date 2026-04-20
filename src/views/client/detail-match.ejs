@@ -56,7 +56,7 @@
                 <div class="fa-dm-grid">
                     <section class="fa-dm-video-section" aria-label="Match video">
                         <div class="fa-dm-video-card">
-                            <video class="fa-dm-video" controls playsinline webkit-playsinline preload="metadata"
+                            <video id="match-video" class="fa-dm-video" controls playsinline webkit-playsinline preload="metadata"
                                 poster="/images/theme.png" src="<%= typeof matchVideoSrc === 'string' ? matchVideoSrc : '' %>">
                                 Your browser does not support the video tag.
                             </video>
@@ -91,8 +91,10 @@
                         <div class="fa-dm-card fa-dm-card--minimap">
                             <h2 class="fa-dm-card__title">Mini-map</h2>
                             <div class="fa-dm-minimap-frame">
-                                <img src="/images/minimap.png" alt="Tactical minimap of player positions" width="640"
-                                    height="360" class="fa-dm-minimap-img" loading="lazy">
+                                <video id="minimap-video" class="fa-dm-video" playsinline webkit-playsinline preload="metadata"
+                                    src="<%= typeof matchVideoSrc === 'string' ? matchVideoSrc : '' %>">
+                                    Your browser does not support the video tag.
+                                </video>
                             </div>
                         </div>
                     </aside>
@@ -108,7 +110,6 @@
                                     <th scope="col">Team</th>
                                     <th scope="col">Player Name</th>
                                     <th scope="col">Average Speed</th>
-                                    <th scope="col">Distance</th>
                                     <th scope="col">Ball Possession</th>
                                 </tr>
                             </thead>
@@ -122,13 +123,12 @@
                                                 <span class="fa-dm-table__team <%= isA ? 'fa-dm-table__team--a' : 'fa-dm-table__team--b' %>"><%= p.team != null ? p.team : '—' %></span>
                                             </td>
                                             <td><%= p.player_name != null ? p.player_name : "—" %></td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td><%= p.avg_speed != null ? p.avg_speed : "—" %></td>
                                             <td>
                                                 <div class="fa-dm-bar-cell">
-                                                    <span class="fa-dm-bar-cell__text">0%</span>
+                                                    <span class="fa-dm-bar-cell__text"><%= p.possession_percent != null ? p.possession_percent : 0 %>%</span>
                                                     <span class="fa-dm-bar" role="presentation"><span class="fa-dm-bar__fill"
-                                                            style="width:0%"></span></span>
+                                                            style="width:<%= p.possession_percent != null ? p.possession_percent : 0 %>%"></span></span>
                                                 </div>
                                             </td>
                                         </tr>

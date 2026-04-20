@@ -60,6 +60,7 @@ model Video {
   user         User          @relation(fields: [user_id], references: [id])
   analysis_session_id Int?
   analysisSession AnalysisSession? @relation(fields: [analysis_session_id], references: [id])
+  possessionTeamA Int?
 
   @@map("videos")
 }

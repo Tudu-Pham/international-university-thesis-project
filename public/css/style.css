@@ -3481,6 +3481,11 @@ html.home-root body.page-home {
     background: rgba(2, 6, 23, 0.5);
 }
 
+.fa-dm-minimap-frame video {
+    transform: scale(3.5) translate(-21%, -71%);
+    transform-origin: top left;
+}
+
 .fa-dm-minimap-img {
     display: block;
     width: 100%;

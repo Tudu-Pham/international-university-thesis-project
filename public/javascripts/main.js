@@ -998,3 +998,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.faDetailMatchSetPossession = setPossession;
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const v1 = document.getElementById("match-video");
+  const v2 = document.getElementById("minimap-video");
+
+  if (!v1 || !v2) return;
+
+  v1.addEventListener("play", () => {
+    v2.currentTime = v1.currentTime;
+    v2.play();
+  });
+
+  v1.addEventListener("pause", () => {
+    v2.pause();
+  });
+
+  v1.addEventListener("seeked", () => {
+    v2.currentTime = v1.currentTime;
+  });
+
+  v1.addEventListener("timeupdate", () => {
+    if (Math.abs(v1.currentTime - v2.currentTime) > 0.3) {
+      v2.currentTime = v1.currentTime;
+    }
+  });
+});
