@@ -30,6 +30,7 @@ import {
     adminDeleteVideo,
     adminDownloadVideo,
     handleAICallback,
+    proxyVideo,
 } from "controllers/user.controller";
 
 const router = express.Router();
@@ -111,6 +112,7 @@ const webRoutes = (app: Express) => {
     );
 
     router.post("/api/ai-callback", handleAICallback);
+    router.get("/proxy/:filename", proxyVideo);
 
     app.use("/", router);
 };

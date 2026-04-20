@@ -20,6 +20,7 @@ import {
     normalizeEmail,
     requestPasswordResetCode,
 } from "services/password-reset.service";
+import http from "http";
 
 const profileErrorMessages: Record<string, string> = {
     incorrect_password: "Incorrect password.",
@@ -612,13 +613,41 @@ const handleAICallback = async (req: Request, res: Response) => {
     await prisma.video.update({
         where: { id: video_id },
         data: {
-            output_video: video_path, // 👈 cập nhật ở đây
+            output_video: "/proxy/" + job_id + ".mp4", // 👈 cập nhật ở đây
             status: "DONE",
             possessionTeamA: Number(possession_left)
         },
     });
 
     return res.status(200).json({ status: "ok" });
+};
+
+const proxyVideo = async (req: Request, res: Response) => {
+    const filename = req.params.filename;
+
+    const options = {
+        hostname: "127.0.0.1",
+        port: 5000,
+        path: `/videos/${filename}`,
+        method: "GET",
+        headers: {
+        Range: req.headers.range || "", // 👈 cực quan trọng cho video
+        },
+    };
+
+    const proxyReq = http.request(options, (proxyRes) => {
+        // copy headers từ server B → client
+        res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
+
+        proxyRes.pipe(res);
+    });
+
+    proxyReq.on("error", (err) => {
+        console.error(err);
+        res.status(500).send("Proxy error");
+    });
+
+    proxyReq.end();
 };
 
 const getProfile = async (req: Request, res: Response) => {
@@ -946,4 +975,5 @@ export {
     downloadVideo,
     adminDeleteVideo,
     adminDownloadVideo,
+    proxyVideo
 };
